@@ -3,59 +3,73 @@
 ## Overview
 This document outlines the development strategy for building a self-hosted document management service in 5 foundational packages, followed by advanced features in Phase 2.
 
-## Phase 1: Foundation Packages (MVP)
+## Phase 1: Foundation Packages (MVP) - REORGANIZED FOR PRODUCTION-FIRST
 
-### Package 1: Project Foundation & Docker Setup
+### Package 1: Infrastructure & Production Deployment Setup
 **Timeline**: 1-2 weeks  
 **Priority**: Critical foundation
 
 #### Deliverables
-- Docker Compose configuration with multi-container setup
-- Spring Boot API server with Java
-- PostgreSQL database with initial schema
-- Ollama container integration
-- Environment configuration management
-- Basic health check endpoints
-- Container networking setup
+- **Terraform configuration** for Proxmox VM provisioning  
+- **Ansible playbooks** for server configuration and security hardening
+- **Docker Compose production setup** with multi-container orchestration
+- **Basic Spring Boot API** with health endpoints for deployment verification
+- **PostgreSQL database** with initial schema and backup configuration
+- **Redis caching layer** for performance and session management
+- **Reverse proxy** (Traefik/Nginx) with SSL/TLS certificates
+- **Monitoring stack** (Prometheus + Grafana) for production visibility
+- **CI/CD pipeline** for automated deployment to your intranet
 
 #### Technical Implementation
-- `docker-compose.yml` with services: api, database, ollama
-- Spring Boot application with auto-configuration
-- Spring Data JPA with Hibernate and database migrations (Flyway)
-- Configuration properties management (@ConfigurationProperties, application.yml)
-- API versioning structure (/api/v1) with Spring Web annotations
+- **Infrastructure as Code**: Terraform Proxmox provider for VM management
+- **Configuration Management**: Ansible for server setup, Docker, security hardening
+- **Container Orchestration**: Docker Compose with production-grade configurations
+- **Service Discovery**: Traefik for reverse proxy and automatic SSL with Let's Encrypt
+- **Database Management**: PostgreSQL with automated backups and health monitoring
+- **Monitoring**: Prometheus + Grafana + AlertManager for production insights
+- **CI/CD**: GitHub Actions/GitLab CI with automated testing and deployment
+- **Basic API**: Spring Boot with health endpoints and configuration management
 
 #### Success Criteria
-- `docker-compose up` starts all services successfully
-- API health endpoint responds (GET /api/v1/health)
-- Database connection established
-- Ollama service accessible from API container
+- **Infrastructure**: Terraform provisions VMs on Proxmox successfully
+- **Configuration**: Ansible configures servers with Docker and security hardening  
+- **Services**: All containers start and pass health checks
+- **Monitoring**: Grafana dashboards show system metrics and alerts
+- **SSL**: HTTPS endpoints accessible with valid certificates
+- **CI/CD**: Pipeline deploys changes automatically to intranet
+- **Backup**: Database backups running and tested
+- **API**: Health endpoint responds (GET /api/v1/health) from production URL
 
-#### File Structure
+#### File Structure (Production-First)
 ```
-├── docker-compose.yml
-├── backend/
-│   ├── build.gradle
-│   ├── settings.gradle
-│   ├── Dockerfile
-│   ├── src/main/java/
-│   │   └── com/docmgr/
-│   │       ├── Application.java
-│   │       ├── config/
-│   │       ├── controller/
-│   │       └── service/
-│   ├── src/main/resources/
-│   │   ├── application.yml
-│   │   └── db/migration/
-│   └── src/test/java/
-└── .env.example
+├── infrastructure/
+│   ├── terraform/
+│   │   ├── main.tf              # Proxmox VMs
+│   │   ├── variables.tf         # Environment configs
+│   │   └── modules/
+│   └── ansible/
+│       ├── site.yml             # Main playbook
+│       ├── roles/
+│       │   ├── docker/          # Docker installation
+│       │   ├── security/        # Server hardening
+│       │   └── monitoring/      # Prometheus setup
+├── docker-compose.yml           # Production services
+├── docker-compose.monitoring.yml # Grafana, Prometheus
+├── traefik/
+│   └── traefik.yml             # Reverse proxy config
+├── .github/workflows/
+│   └── deploy.yml              # CI/CD pipeline
+├── backend/                    # Basic Spring Boot API (Package 1.1 DONE)
+└── monitoring/
+    ├── prometheus.yml
+    └── grafana/dashboards/
 ```
 
 ---
 
-### Package 2: LLM Service Abstraction Layer
+### Package 2: Document Upload & Storage (MOVED UP)
 **Timeline**: 2-3 weeks  
-**Priority**: Core architecture component
+**Priority**: Core functionality - extends Package 1 infrastructure
 
 #### Deliverables
 - Abstract LLM service interface (Strategy pattern)
@@ -249,17 +263,21 @@ src/
 
 ---
 
-## Package Dependencies
+## Package Dependencies (PRODUCTION-FIRST APPROACH)
 
 ```
-Package 1 (Foundation)
-    ↓
-Package 2 (LLM Service) ← Can develop in parallel with Package 3
-    ↓                    ↓
-Package 3 (File Upload) → Package 5 (LLM Processing)
-    ↓                         ↓
-Package 4 (Mobile UI) --------→ Integration & Testing
+Package 1 (Infrastructure + Production Deployment)
+    ↓ (Deploy after each package)
+Package 2 (Document Upload & Storage) → Production Deployment v2
+    ↓ (Deploy after each package)
+Package 3 (LLM Service Abstraction) → Production Deployment v3
+    ↓ (Deploy after each package)
+Package 4 (Mobile-First Web Interface) → Production Deployment v4
+    ↓ (Deploy after each package)
+Package 5 (LLM Document Processing) → Production Deployment v5 (MVP)
 ```
+
+**Key Principle**: After each package completion, the system is deployed to production and fully functional for that feature set.
 
 ## Phase 1 Technology Stack
 
