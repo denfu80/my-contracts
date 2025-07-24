@@ -25,7 +25,7 @@ This is a **Personal Document Management Service** - a self-hosted solution for 
 ## Development Status
 
 **Current State**: Requirements defined, ready for implementation
-**Implementation Strategy**: 5 foundational packages building incrementally
+**Implementation Strategy**: 6 foundational packages building incrementally
 
 ## Development Packages (Phase 1)
 
@@ -58,6 +58,12 @@ This is a **Personal Document Management Service** - a self-hosted solution for 
 - Entity extraction and categorization
 - Results storage and insights display
 - **Success**: End-to-end document processing with LLM analysis
+
+### Package 6: Deployment & Infrastructure Automation
+- Proxmox deployment with Terraform + Ansible
+- Production Docker configuration with security hardening
+- Monitoring, logging, and backup systems
+- **Success**: One-command production deployment
 
 ## Technology Stack (Phase 1)
 - **Backend**: Node.js + Express + TypeScript + Prisma ORM
@@ -102,6 +108,68 @@ This is a **Personal Document Management Service** - a self-hosted solution for 
 3. **Storage & Indexing**: Structured DB storage → full-text indexing → file storage
 4. **Retrieval**: Search interface → filtered results → document preview
 
+## Development Commands (Post-Implementation)
+
+**Current Status**: No package.json exists yet - these commands will be available after Package 1 completion.
+
+### Backend (Node.js/TypeScript)
+```bash
+# After Package 1 implementation:
+cd backend
+npm run dev          # Start development server with hot reload
+npm run build        # Build for production
+npm run test         # Run Jest tests
+npm run test:watch   # Run tests in watch mode
+npm run lint         # ESLint code checking
+npm run lint:fix     # Auto-fix linting issues
+npm run db:migrate   # Run Prisma migrations
+npm run db:seed      # Seed development database
+npm run db:studio    # Open Prisma Studio
+```
+
+### Frontend (React PWA)
+```bash
+# After Package 4 implementation:
+cd frontend
+npm run dev          # Start Vite dev server
+npm run build        # Build PWA for production
+npm run preview      # Preview production build
+npm run test         # Run Vitest tests
+npm run test:ui      # Run tests with UI
+npm run lint         # ESLint + TypeScript checking
+```
+
+### Docker & Infrastructure
+```bash
+# Development environment
+docker-compose up -d              # Start all services
+docker-compose down               # Stop all services
+docker-compose logs -f [service]  # View service logs
+docker-compose exec api bash      # Shell into API container
+
+# Production deployment (Package 6)
+cd infrastructure/terraform
+terraform plan                    # Plan infrastructure changes
+terraform apply                   # Deploy to Proxmox
+cd ../ansible
+ansible-playbook deploy.yml       # Configure services
+```
+
+### Full Stack Operations
+```bash
+# After full implementation:
+npm run start:all    # Start all services in development
+npm run test:e2e     # Run end-to-end tests with Playwright
+npm run deploy:prod  # Deploy to production (Package 6)
+```
+
+## Project Status & Next Steps
+
+**Current Phase**: Ready for Package 1 implementation
+**Next Action**: Initialize Node.js projects and Docker configuration
+
+Refer to `PHASE_1_DETAILED.md` for specific implementation tasks and file structures.
+
 ## Development Considerations
 
 - Prioritize data privacy and local processing
@@ -109,3 +177,6 @@ This is a **Personal Document Management Service** - a self-hosted solution for 
 - Plan for high document processing accuracy (95%+ target)
 - Ensure sub-second search response times
 - Build intuitive UI requiring minimal user training
+- Use Context7 MCP for latest API documentation
+- TypeScript strict mode with comprehensive testing
+- Mobile-first responsive design principles
