@@ -8,14 +8,14 @@ Personal Document Management Service - a self-hosted Java/Spring Boot applicatio
 
 ## Architecture & Tech Stack
 
-- **Backend**: Java 21 + Spring Boot 3.4.7 + Spring Data JPA + PostgreSQL 15
+- **Backend**: Java 17+ + Spring Boot 3.5.4 + Spring AI 1.0.0 + PostgreSQL 15
 - **Cache**: Redis 7 + Spring Data Redis  
 - **LLM Integration**: Gemini Flash 1.5 API + Ollama (llama3.1) with strategy pattern
-- **Document Processing**: Apache Tika 2.9.1 + PDFBox 3.0.1
+- **Document Processing**: Spring AI Tika Document Reader + Apache Tika + PDFBox
 - **Database**: PostgreSQL with Flyway migrations
 - **Infrastructure**: Docker Compose with health checks
-- **Testing**: JUnit 5 + TestContainers + H2 (test database)
-- **Code Quality**: Spotless (Google Java Format)
+- **Testing**: JUnit 5 + Spring Boot Test
+- **Container Orchestration**: Docker Compose with health checks
 
 ## Current Status
 
@@ -106,10 +106,10 @@ docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 ## Development Guidelines
 
 - Use Context7 MCP for latest API documentation
-- TypeScript strict mode with comprehensive testing
 - Follow Spring Boot conventions and security best practices
-- Test with TestContainers for integration tests
+- Use JUnit 5 for testing with Spring Boot Test framework
 - Never commit secrets or API keys
+- Package structure follows `org.mycontract.backend` namespace
 
 ## Project Documentation
 
