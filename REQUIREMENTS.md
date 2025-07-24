@@ -30,7 +30,7 @@ A self-hosted document management service that automatically processes contracts
 ## Technical Requirements
 
 ### Architecture
-- **Backend**: Node.js/TypeScript API server
+- **Backend**: Java/Spring Boot API server
 - **Frontend**: Modern reactive UI (React/Vue with TypeScript) - **Mobile-First Design**
 - **Database**: PostgreSQL in Docker container
 - **LLM Integration**: Local or API-based language model for document processing

@@ -11,7 +11,7 @@ This document outlines the development strategy for building a self-hosted docum
 
 #### Deliverables
 - Docker Compose configuration with multi-container setup
-- Node.js/Express API server with TypeScript
+- Spring Boot API server with Java
 - PostgreSQL database with initial schema
 - Ollama container integration
 - Environment configuration management
@@ -20,10 +20,10 @@ This document outlines the development strategy for building a self-hosted docum
 
 #### Technical Implementation
 - `docker-compose.yml` with services: api, database, ollama
-- Express server with middleware (cors, helmet, morgan)
-- Prisma ORM setup with database migrations
-- Environment variables management (.env, validation)
-- API versioning structure (/api/v1)
+- Spring Boot application with auto-configuration
+- Spring Data JPA with Hibernate and database migrations (Flyway)
+- Configuration properties management (@ConfigurationProperties, application.yml)
+- API versioning structure (/api/v1) with Spring Web annotations
 
 #### Success Criteria
 - `docker-compose up` starts all services successfully
@@ -35,14 +35,19 @@ This document outlines the development strategy for building a self-hosted docum
 ```
 ├── docker-compose.yml
 ├── backend/
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── src/
-│   │   ├── app.ts
-│   │   ├── config/
-│   │   └── routes/
-│   └── prisma/
-│       └── schema.prisma
+│   ├── build.gradle
+│   ├── settings.gradle
+│   ├── Dockerfile
+│   ├── src/main/java/
+│   │   └── com/docmgr/
+│   │       ├── Application.java
+│   │       ├── config/
+│   │       ├── controller/
+│   │       └── service/
+│   ├── src/main/resources/
+│   │   ├── application.yml
+│   │   └── db/migration/
+│   └── src/test/java/
 └── .env.example
 ```
 
@@ -63,12 +68,12 @@ This document outlines the development strategy for building a self-hosted docum
 - Provider health checking
 
 #### Technical Implementation
-- Abstract `LLMProvider` interface
-- `GeminiProvider` class with Google GenAI SDK
-- `OllamaProvider` class with REST API client
-- `LLMService` orchestration layer
-- Redis for rate limiting and caching (optional)
-- Provider switching logic with fallback
+- Abstract `LLMProvider` interface with Spring components
+- `GeminiProvider` class using Spring WebClient for API calls
+- `OllamaProvider` class with Spring HTTP client
+- `LLMService` orchestration layer with Spring Service annotations
+- Redis integration with Spring Data Redis for rate limiting
+- Provider switching logic with Spring configuration profiles
 
 #### Success Criteria
 - Can switch between Gemini and Ollama providers
@@ -99,12 +104,12 @@ This document outlines the development strategy for building a self-hosted docum
 - Basic error handling and logging
 
 #### Technical Implementation
-- Multer middleware for file uploads
-- pdf-parse library for PDF text extraction
-- File type validation and size limits
-- Document metadata schema (Prisma)
-- File storage organization by date/type
-- Virus scanning integration (ClamAV optional)
+- Spring Multipart for file uploads with size/type validation
+- Apache Tika for universal document text extraction
+- PDFBox for advanced PDF processing and metadata extraction
+- JPA entities for document metadata with Spring Data repositories
+- File storage organization using Spring Resource abstraction
+- Optional virus scanning integration with ClamAV
 
 #### Success Criteria
 - Upload PDF files via API
@@ -120,13 +125,26 @@ This document outlines the development strategy for building a self-hosted docum
 - `GET /api/v1/documents/:id/content` - Download file
 - `DELETE /api/v1/documents/:id` - Delete document
 
-#### Database Schema
-```sql
-Documents table:
-- id, filename, originalName, mimeType
-- fileSize, filePath, textContent
-- uploadedAt, processedAt, status
-- metadata (JSON field)
+#### Database Schema (JPA Entities)
+```java
+@Entity
+@Table(name = "documents")
+public class Document {
+    @Id @GeneratedValue
+    private UUID id;
+    private String filename;
+    private String originalName;
+    private String mimeType;
+    private Long fileSize;
+    private String filePath;
+    @Lob private String textContent;
+    private LocalDateTime uploadedAt;
+    private LocalDateTime processedAt;
+    @Enumerated(EnumType.STRING)
+    private DocumentStatus status;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> metadata;
+}
 ```
 
 ---
@@ -201,12 +219,12 @@ src/
 - Error handling for LLM failures
 
 #### Technical Implementation
-- Document processing queue (Bull/Agenda)
-- LLM prompt engineering for document analysis
-- Structured output parsing (JSON schema)
-- Database schema for extracted entities
-- Processing status updates via WebSocket/SSE
-- Background job processing
+- Spring Async with @Async for background processing
+- Redis-based task queuing with Spring Data Redis
+- LLM prompt engineering with structured JSON responses
+- JPA entities for extracted document data and analysis results
+- WebSocket support using Spring WebSocket/STOMP for real-time updates
+- Spring Events for decoupled processing pipeline
 
 #### Success Criteria
 - Upload document triggers LLM analysis
@@ -246,13 +264,13 @@ Package 4 (Mobile UI) --------→ Integration & Testing
 ## Phase 1 Technology Stack
 
 ### Backend
-- **Runtime**: Node.js 20+ with TypeScript
-- **Framework**: Express.js with middleware
-- **Database**: PostgreSQL 15+ with Prisma ORM
-- **LLM Integration**: Google GenAI SDK + Ollama REST API
-- **File Processing**: pdf-parse, multer, sharp
-- **Background Jobs**: Bull Queue with Redis
-- **Validation**: Zod for schema validation
+- **Runtime**: Java 21 with Spring Boot 3.x
+- **Framework**: Spring Web MVC with Spring Security
+- **Database**: PostgreSQL 15+ with Spring Data JPA
+- **LLM Integration**: Java HTTP clients for Gemini API + Ollama REST
+- **File Processing**: Apache Tika, PDFBox, Spring Multipart
+- **Background Jobs**: Spring Async + Redis with Spring Data Redis
+- **Validation**: Jakarta Bean Validation with Hibernate Validator
 
 ### Frontend
 - **Framework**: React 18 with TypeScript
@@ -263,10 +281,10 @@ Package 4 (Mobile UI) --------→ Integration & Testing
 - **HTTP Client**: Axios with interceptors
 
 ### Infrastructure
-- **Containerization**: Docker Compose
+- **Containerization**: Docker Compose with multi-stage Java builds
 - **Database**: PostgreSQL container
 - **LLM**: Ollama container with model management
-- **Reverse Proxy**: Nginx (optional for production)
+- **Build Tool**: Gradle with Docker integration
 - **Storage**: Local filesystem with Docker volumes
 
 ### Package 6: Deployment & Infrastructure Automation

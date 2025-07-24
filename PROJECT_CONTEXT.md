@@ -14,7 +14,7 @@ I'm building a **Personal Document Management Service** - a self-hosted solution
 
 ## Key Architecture Decisions
 - **LLM Providers**: Gemini Flash 1.5 (free tier) + Ollama (local) with Strategy pattern
-- **Tech Stack**: Node.js/TypeScript + React PWA + PostgreSQL + Docker
+- **Tech Stack**: Java/Spring Boot + React PWA + PostgreSQL + Docker
 - **Mobile-First**: Single responsive UI with Android Share API integration
 - **Infrastructure**: Proxmox deployment with Terraform + Ansible automation
 

@@ -22,7 +22,11 @@ my-contracts/
 ├── backend/
 │   ├── Dockerfile
 │   ├── Dockerfile.dev
-│   ├── package.json
+│   ├── build.gradle
+│   ├── settings.gradle
+│   ├── gradle/
+│   ├── gradlew
+│   ├── gradlew.bat
 │   └── src/
 ├── frontend/
 │   ├── Dockerfile
@@ -37,7 +41,7 @@ my-contracts/
 **Duration**: 3-4 days
 
 #### Tasks
-- [ ] Create multi-stage Dockerfile for Node.js backend
+- [ ] Create multi-stage Dockerfile for Java Spring Boot backend
 - [ ] Configure PostgreSQL container with initialization scripts
 - [ ] Set up Ollama container with model management
 - [ ] Create development vs production docker-compose files
@@ -69,63 +73,96 @@ services:
 **Duration**: 4-5 days
 
 #### Tasks
-- [ ] Initialize Node.js project with TypeScript
-- [ ] Configure Express.js with essential middleware
-- [ ] Set up Prisma ORM with PostgreSQL
-- [ ] Create environment variable validation (Zod)
-- [ ] Implement basic error handling middleware
-- [ ] Set up logging with Winston
-- [ ] Create health check endpoints
-- [ ] Configure API versioning structure
+- [ ] Initialize Spring Boot project with Gradle
+- [ ] Configure Spring Web MVC with essential components
+- [ ] Set up Spring Data JPA with PostgreSQL
+- [ ] Create configuration properties validation (@ConfigurationProperties)
+- [ ] Implement global exception handling (@ControllerAdvice)
+- [ ] Set up logging with Logback and structured logging
+- [ ] Create health check endpoints (Spring Actuator)
+- [ ] Configure API versioning structure with @RequestMapping
 
 #### Core Files
-```typescript
-// src/app.ts - Main application setup
-// src/config/ - Environment and database config
-// src/middleware/ - Custom middleware
-// src/routes/ - API route definitions
-// src/utils/ - Utility functions
-// prisma/schema.prisma - Database schema
+```java
+// src/main/java/com/docmgr/Application.java - Spring Boot main class
+// src/main/java/com/docmgr/config/ - Configuration classes
+// src/main/java/com/docmgr/controller/ - REST controllers
+// src/main/java/com/docmgr/service/ - Business logic services
+// src/main/java/com/docmgr/repository/ - Data access layers
+// src/main/java/com/docmgr/entity/ - JPA entities
+// src/main/resources/application.yml - Configuration properties
+// src/main/resources/db/migration/ - Flyway migration scripts
 ```
 
 ### 1.4 Database Schema & Migrations
 **Duration**: 2-3 days
 
 #### Tasks
-- [ ] Design initial database schema
-- [ ] Create Prisma migration files
-- [ ] Set up database seeding for development
-- [ ] Configure connection pooling
-- [ ] Add database backup considerations
+- [ ] Design initial JPA entity classes
+- [ ] Create Flyway migration scripts
+- [ ] Set up database seeding with @DataJpaTest and test data
+- [ ] Configure HikariCP connection pooling
+- [ ] Add database backup considerations with Spring profiles
 
-#### Initial Schema
-```prisma
-model Document {
-  id          String   @id @default(cuid())
-  filename    String
-  originalName String
-  mimeType    String
-  fileSize    Int
-  filePath    String
-  textContent String?
-  uploadedAt  DateTime @default(now())
-  processedAt DateTime?
-  status      DocumentStatus @default(UPLOADED)
-  metadata    Json?
-  
-  analysis DocumentAnalysis?
-  
-  @@map("documents")
+#### Initial Schema (JPA Entities)
+```java
+@Entity
+@Table(name = "documents")
+public class Document {
+    @Id @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    
+    @Column(nullable = false)
+    private String filename;
+    
+    @Column(nullable = false)
+    private String originalName;
+    
+    @Column(nullable = false)
+    private String mimeType;
+    
+    @Column(nullable = false)
+    private Long fileSize;
+    
+    @Column(nullable = false)
+    private String filePath;
+    
+    @Lob
+    private String textContent;
+    
+    @Column(nullable = false)
+    private LocalDateTime uploadedAt = LocalDateTime.now();
+    
+    private LocalDateTime processedAt;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DocumentStatus status = DocumentStatus.UPLOADED;
+    
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> metadata;
+    
+    @OneToOne(mappedBy = "document", cascade = CascadeType.ALL)
+    private DocumentAnalysis analysis;
 }
 
-model LLMProvider {
-  id       String @id @default(cuid())
-  name     String @unique
-  type     ProviderType
-  config   Json
-  isActive Boolean @default(false)
-  
-  @@map("llm_providers")
+@Entity
+@Table(name = "llm_providers")
+public class LLMProvider {
+    @Id @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    
+    @Column(unique = true, nullable = false)
+    private String name;
+    
+    @Enumerated(EnumType.STRING)
+    private ProviderType type;
+    
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> config;
+    
+    @Column(nullable = false)
+    private Boolean isActive = false;
 }
 ```
 
@@ -144,19 +181,21 @@ model LLMProvider {
 - [ ] Design token usage tracking
 
 #### Core Interfaces
-```typescript
-interface LLMProvider {
-  name: string;
-  type: ProviderType;
-  isAvailable(): Promise<boolean>;
-  complete(prompt: string, options?: CompletionOptions): Promise<LLMResponse>;
-  analyze(text: string, schema: AnalysisSchema): Promise<StructuredResponse>;
+```java
+public interface LLMProvider {
+    String getName();
+    ProviderType getType();
+    CompletableFuture<Boolean> isAvailable();
+    CompletableFuture<LLMResponse> complete(String prompt, CompletionOptions options);
+    CompletableFuture<StructuredResponse> analyze(String text, AnalysisSchema schema);
 }
 
-interface LLMService {
-  getProvider(name?: string): LLMProvider;
-  switchProvider(name: string): Promise<void>;
-  getUsageStats(): Promise<UsageStats>;
+@Service
+public interface LLMService {
+    LLMProvider getProvider(String name);
+    CompletableFuture<Void> switchProvider(String name);
+    CompletableFuture<UsageStats> getUsageStats();
+    List<LLMProvider> getAvailableProviders();
 }
 ```
 
@@ -164,25 +203,38 @@ interface LLMService {
 **Duration**: 3-4 days
 
 #### Tasks
-- [ ] Install and configure Google GenAI SDK
-- [ ] Implement Gemini provider class
-- [ ] Handle API key management securely
-- [ ] Implement rate limiting for free tier
-- [ ] Add request/response logging
-- [ ] Create error handling for API failures
-- [ ] Add token counting and usage tracking
+- [ ] Configure Spring WebClient for Gemini API calls
+- [ ] Implement Gemini provider class with Spring components
+- [ ] Handle API key management with @Value and Spring Security
+- [ ] Implement rate limiting using Spring Data Redis and custom annotations
+- [ ] Add request/response logging with Spring AOP
+- [ ] Create error handling with Spring retry and circuit breakers
+- [ ] Add token counting and usage tracking with Spring metrics
 
 #### Implementation Details
-```typescript
-class GeminiProvider implements LLMProvider {
-  private client: GoogleGenerativeAI;
-  private model: GenerativeModel;
-  private rateLimiter: RateLimiter;
-  
-  async complete(prompt: string): Promise<LLMResponse> {
-    await this.rateLimiter.checkLimit();
-    // Implementation with error handling
-  }
+```java
+@Component("geminiProvider")
+public class GeminiProvider implements LLMProvider {
+    private final WebClient webClient;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final MeterRegistry meterRegistry;
+    
+    @Value("${gemini.api.key}")
+    private String apiKey;
+    
+    @Override
+    @RateLimited(provider = "gemini", requestsPerMinute = 15)
+    @Retryable(value = {ApiException.class}, maxAttempts = 3)
+    public CompletableFuture<LLMResponse> complete(String prompt, CompletionOptions options) {
+        return webClient.post()
+            .uri("/v1beta/models/gemini-1.5-flash-latest:generateContent")
+            .header("Authorization", "Bearer " + apiKey)
+            .bodyValue(buildRequest(prompt, options))
+            .retrieve()
+            .bodyToMono(GeminiResponse.class)
+            .map(this::mapToLLMResponse)
+            .toFuture();
+    }
 }
 ```
 
@@ -199,14 +251,36 @@ class GeminiProvider implements LLMProvider {
 - [ ] Create resource monitoring
 
 #### Ollama Integration
-```typescript
-class OllamaProvider implements LLMProvider {
-  private baseUrl: string;
-  private currentModel: string;
-  
-  async pullModel(modelName: string): Promise<void>;
-  async listModels(): Promise<string[]>;
-  async complete(prompt: string): Promise<LLMResponse>;
+```java
+@Component("ollamaProvider")
+public class OllamaProvider implements LLMProvider {
+    private final WebClient webClient;
+    
+    @Value("${ollama.base-url}")
+    private String baseUrl;
+    
+    @Value("${ollama.default-model}")
+    private String currentModel;
+    
+    public CompletableFuture<Void> pullModel(String modelName) {
+        return webClient.post()
+            .uri(baseUrl + "/api/pull")
+            .bodyValue(Map.of("name", modelName))
+            .retrieve()
+            .bodyToMono(Void.class)
+            .toFuture();
+    }
+    
+    public CompletableFuture<List<String>> listModels() {
+        return webClient.get()
+            .uri(baseUrl + "/api/tags")
+            .retrieve()
+            .bodyToMono(OllamaModelsResponse.class)
+            .map(response -> response.getModels().stream()
+                .map(model -> model.getName())
+                .collect(Collectors.toList()))
+            .toFuture();
+    }
 }
 ```
 
