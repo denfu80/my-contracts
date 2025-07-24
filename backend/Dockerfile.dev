@@ -1,0 +1,40 @@
+# Development Dockerfile with hot reload support
+FROM gradle:jdk17-alpine AS development
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Create non-root user
+RUN addgroup -g 1000 docmgr && \
+    adduser -u 1000 -G docmgr -s /bin/sh -D docmgr
+
+# Set working directory
+WORKDIR /app
+
+# Create necessary directories
+RUN mkdir -p /app/uploads /app/temp && \
+    chown -R docmgr:docmgr /app
+
+# Copy Gradle files first for better caching
+COPY --chown=docmgr:docmgr build.gradle.kts settings.gradle.kts ./
+COPY --chown=docmgr:docmgr gradle ./gradle
+COPY --chown=docmgr:docmgr gradlew ./
+
+# Download dependencies (this layer will be cached if dependencies don't change)
+RUN gradle build --no-daemon -x test -x bootJar || return 0
+
+# Copy source code
+COPY --chown=docmgr:docmgr src ./src
+
+# Switch to non-root user
+USER docmgr
+
+# Expose ports
+EXPOSE 3000 5005
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:3000/api/v1/health || exit 1
+
+# Run application in development mode with debug port
+ENTRYPOINT ["gradle", "bootRun", "--no-daemon"]

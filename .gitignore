@@ -1,61 +1,66 @@
-# IDE
-/.idea/
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
 .vscode/
+.idea/
 *.swp
 *.swo
 
-# Java/Gradle
-backend/.gradle/
-backend/build/
-backend/out/
-backend/*.jar
-backend/*.war
-backend/gradle.properties
-
-# Spring Boot
-backend/application-local.yml
-backend/application-*.yml
-!backend/application.yml
-
-# Node.js/React
-frontend/node_modules/
-frontend/dist/
-frontend/build/
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
-
-# Docker
-.env
-.env.local
+# Docker files
 docker-compose.override.yml
-
-# Database
-*.db
-*.sqlite
-postgres_data/
-
-# LLM Models
-ollama_data/
-
-# Uploads
-uploads/
-temp/
 
 # Logs
 logs/
 *.log
 
-# OS
-.DS_Store
-Thumbs.db
+# Runtime data
+temp/
+uploads/
+backups/
 
-# Secrets
-*.key
+# Node.js (for frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Java/Gradle (for backend)
+.gradle/
+build/
+out/
+*.jar
+*.war
+*.ear
+*.class
+
+# Database
+*.db
+*.sqlite
+
+# Redis dumps
+dump.rdb
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Ansible
+*.retry
+
+# Certificates
 *.pem
-secrets/
-/backend/.idea/
+*.key
+*.crt
+
+# Backup files
+*.bak
+*.backup

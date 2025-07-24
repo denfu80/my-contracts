@@ -1,4 +1,5 @@
-version: '3.8'
+# Docker Compose file for Phase 1.1 - Core Services
+# PostgreSQL + Redis + Spring Boot API
 
 services:
   # PostgreSQL Database
@@ -29,7 +30,7 @@ services:
     container_name: docmgr-redis
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_PORT:-6380}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -40,25 +41,8 @@ services:
     networks:
       - docmgr-network
 
-  # Ollama for local LLM processing
-  ollama:
-    image: ollama/ollama:latest
-    container_name: docmgr-ollama
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    environment:
-      - OLLAMA_ORIGINS=http://localhost:3000
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/version"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    networks:
-      - docmgr-network
+  # Note: Ollama will be deployed as external service on your network
+  # Configuration for external Ollama connection will be added in Package 2
 
   # Spring Boot API
   api:
@@ -78,7 +62,6 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme_secure_password}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - OLLAMA_BASE_URL=http://ollama:11434
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - JWT_SECRET=${JWT_SECRET:-}
       - UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:-52428800}
@@ -91,8 +74,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      ollama:
-        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
       interval: 30s
@@ -106,8 +87,6 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
-    driver: local
-  ollama_data:
     driver: local
   uploads_data:
     driver: local

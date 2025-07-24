@@ -10,12 +10,17 @@ Personal Document Management Service - a self-hosted Java/Spring Boot applicatio
 
 - **Backend**: Java 17+ + Spring Boot 3.5.4 + Spring AI 1.0.0 + PostgreSQL 15
 - **Cache**: Redis 7 + Spring Data Redis  
-- **LLM Integration**: Gemini Flash 1.5 API + Ollama (llama3.1) with strategy pattern
+- **LLM Integration**: Gemini Flash 1.5 API + External Ollama service with strategy pattern
 - **Document Processing**: Spring AI Tika Document Reader + Apache Tika + PDFBox
 - **Database**: PostgreSQL with Flyway migrations
 - **Infrastructure**: Docker Compose with health checks
 - **Testing**: JUnit 5 + Spring Boot Test
 - **Container Orchestration**: Docker Compose with health checks
+
+## External Services
+
+- **Ollama**: Will be deployed as separate service on your network (Package 2)
+- **LLM Providers**: External API endpoints (Gemini) and local Ollama instance
 
 ## Current Status
 
@@ -27,8 +32,8 @@ Personal Document Management Service - a self-hosted Java/Spring Boot applicatio
 
 ### Docker Development (Recommended)
 ```bash
-# Start all services with development overrides
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# Phase 1.1: Start core services (PostgreSQL + Redis + API)
+docker-compose up -d
 
 # View logs for specific service
 docker-compose logs -f api
@@ -39,6 +44,9 @@ docker-compose down
 
 # Rebuild API service after code changes
 docker-compose build api && docker-compose up -d api
+
+# Development with hot reload (Package 1.2)
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
 ### Backend Development (Java/Spring Boot)
@@ -72,11 +80,10 @@ cd backend
 # Access PostgreSQL via Docker
 docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 
-# Access pgAdmin (dev environment)
-# Navigate to http://localhost:8080
+# Access Redis via Docker
+docker exec -it docmgr-redis redis-cli
 
-# Access Redis Commander (dev environment)  
-# Navigate to http://localhost:8081
+# Development tools (pgAdmin, Redis Commander) available in Package 1.2
 ```
 
 ## Key Architecture Patterns
@@ -110,6 +117,29 @@ docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 - Use JUnit 5 for testing with Spring Boot Test framework
 - Never commit secrets or API keys
 - Package structure follows `org.mycontract.backend` namespace
+
+## Phase Discipline & Boundary Control
+
+### ⚠️ CRITICAL: Stick to Phase Boundaries
+- **NEVER implement future phase tasks** without explicit user approval
+- **ALWAYS verify phase completion** with user before proceeding
+- **EACH PHASE** has specific deliverables - do not expand scope
+
+### Phase Verification Protocol
+1. Complete only tasks listed in current phase
+2. **MANDATORY**: Present phase completion summary to user
+3. **WAIT** for user confirmation before next phase
+4. Update documentation to reflect actual implementation
+
+### Current Phase Status
+- **Phase 1.1**: ✅ OFFICIALLY COMPLETE ✅ (Environment + Basic Docker + API)
+- **Phase 1.2**: 🎯 READY TO START (Advanced Docker + Dev Tools)
+- **Phase 1.3**: 🔲 PENDING (Backend API Foundation)
+
+### Phase Scope Reminders
+- **Phase 1.1**: Project structure + Basic Spring Boot + Core containers
+- **Phase 1.2**: Development tools + Advanced Docker features
+- **Phase 1.3**: API endpoints + Business logic + Exception handling
 
 ## Project Documentation
 
