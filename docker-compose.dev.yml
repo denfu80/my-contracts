@@ -49,7 +49,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@docmgr.local
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin123
     volumes:
       - pgadmin_data:/var/lib/pgadmin
