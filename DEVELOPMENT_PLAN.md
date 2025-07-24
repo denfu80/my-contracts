@@ -269,33 +269,86 @@ Package 4 (Mobile UI) --------→ Integration & Testing
 - **Reverse Proxy**: Nginx (optional for production)
 - **Storage**: Local filesystem with Docker volumes
 
+### Package 6: Deployment & Infrastructure Automation
+**Timeline**: 2-3 weeks  
+**Priority**: Production readiness
+
+#### Deliverables
+- Terraform configuration for Proxmox VM provisioning
+- Ansible playbooks for server configuration
+- CI/CD pipeline (GitHub Actions or GitLab CI)
+- Docker Swarm or Kubernetes setup for clustering
+- Monitoring and logging stack (Prometheus, Grafana, Loki)
+- Backup automation for Proxmox environment
+- SSL/TLS certificate management (Let's Encrypt)
+- Network security configuration
+
+#### Technical Implementation
+- **Infrastructure as Code**: Terraform Proxmox provider
+- **Configuration Management**: Ansible for server setup
+- **Container Orchestration**: Docker Swarm (simpler) or K3s (lightweight Kubernetes)
+- **Load Balancing**: HAProxy or Traefik for multi-node setup
+- **Monitoring**: Prometheus + Grafana + AlertManager
+- **Logging**: Loki + Promtail for centralized logs
+- **Backup**: Proxmox Backup Server integration
+
+#### Success Criteria
+- Automated VM creation on Proxmox nodes
+- One-command deployment to production
+- Multi-node clustering operational
+- Monitoring dashboards functional
+- Automated backups running
+- SSL certificates auto-renewed
+
+#### Infrastructure Components
+```
+Proxmox Cluster:
+├── Node 1 (Primary)
+│   ├── Document Management VMs
+│   ├── Database cluster node
+│   └── Monitoring stack
+├── Node 2 (Secondary - optional)
+│   ├── Load balancer
+│   ├── Database replica
+│   └── Backup services
+└── Shared Storage (Ceph/NFS)
+```
+
+#### Deployment Pipeline
+1. **Code Push** → Git repository
+2. **CI Build** → Docker images + tests
+3. **Infrastructure** → Terraform provisions VMs
+4. **Configuration** → Ansible configures services
+5. **Deployment** → Docker Swarm/K3s updates
+6. **Monitoring** → Health checks and alerts
+
 ## Phase 2: Advanced Features (Post-MVP)
 
-### Package 6: Advanced Document Processing
+### Package 7: Advanced Document Processing
 - OCR for scanned documents (Tesseract.js)
 - Support for DOCX, images, email formats
 - Batch processing capabilities
 - Document relationship detection
 
-### Package 7: Search & Filtering System
+### Package 8: Search & Filtering System
 - Elasticsearch/PostgreSQL full-text search
 - Advanced filtering and sorting
 - Smart search with LLM assistance
 - Saved search queries
 
-### Package 8: Dashboard & Analytics
+### Package 9: Dashboard & Analytics
 - Cost tracking and visualization
 - Contract expiration alerts
 - Document statistics and insights
 - Customizable dashboard widgets
 
-### Package 9: Email Integration
+### Package 10: Email Integration
 - IMAP email monitoring
 - Email forwarding processing
 - Attachment extraction
 - Email thread analysis
 
-### Package 10: Backup & Export System
+### Package 11: Backup & Export System
 - Automated backup scheduling
 - Data export in multiple formats
 - Cloud storage integration (optional)
