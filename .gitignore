@@ -1,1 +1,61 @@
+# IDE
 /.idea/
+.vscode/
+*.swp
+*.swo
+
+# Java/Gradle
+backend/.gradle/
+backend/build/
+backend/out/
+backend/*.jar
+backend/*.war
+backend/gradle.properties
+
+# Spring Boot
+backend/application-local.yml
+backend/application-*.yml
+!backend/application.yml
+
+# Node.js/React
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Docker
+.env
+.env.local
+docker-compose.override.yml
+
+# Database
+*.db
+*.sqlite
+postgres_data/
+
+# LLM Models
+ollama_data/
+
+# Uploads
+uploads/
+temp/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.key
+*.pem
+secrets/
+/backend/.idea/

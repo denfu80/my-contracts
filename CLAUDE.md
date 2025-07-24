@@ -4,50 +4,79 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal Document Management Service - a self-hosted Java/Spring Boot application for automatically processing contracts, bills, and emails using LLM technology. Currently in pre-implementation planning phase.
+Personal Document Management Service - a self-hosted Java/Spring Boot application for automatically processing contracts, bills, and emails using LLM technology. Currently implementing Package 1 (Backend Foundation).
 
 ## Architecture & Tech Stack
 
-- **Backend**: Java 21 + Spring Boot 3.x + Spring Data JPA + PostgreSQL
-- **Frontend**: React + TypeScript + Vite (PWA with mobile-first design)
-- **LLM Integration**: Gemini Flash 1.5 API + Ollama (local) with strategy pattern
-- **Document Processing**: Apache Tika + PDFBox + Tesseract OCR
-- **Infrastructure**: Docker Compose + PostgreSQL + Redis
+- **Backend**: Java 21 + Spring Boot 3.4.7 + Spring Data JPA + PostgreSQL 15
+- **Cache**: Redis 7 + Spring Data Redis  
+- **LLM Integration**: Gemini Flash 1.5 API + Ollama (llama3.1) with strategy pattern
+- **Document Processing**: Apache Tika 2.9.1 + PDFBox 3.0.1
+- **Database**: PostgreSQL with Flyway migrations
+- **Infrastructure**: Docker Compose with health checks
+- **Testing**: JUnit 5 + TestContainers + H2 (test database)
+- **Code Quality**: Spotless (Google Java Format)
 
 ## Current Status
 
-**Phase**: Pre-implementation (no source code exists yet)
-**Next Action**: Package 1 - Initialize Spring Boot project with Gradle and Docker setup
-**Implementation Strategy**: 6 incremental packages (see `DEVELOPMENT_PLAN.md`)
+**Phase**: Package 1 - Backend Foundation ✅ (CORRECTED)
+**Implementation Progress**: Spring Boot API, Docker services, database schema
+**Next**: Package 2 - LLM Service Abstraction Layer
 
 ## Development Commands
 
-> **Note**: These commands will be available after implementation begins
+### Docker Development (Recommended)
+```bash
+# Start all services with development overrides
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
-### Backend (Java/Spring Boot)
+# View logs for specific service
+docker-compose logs -f api
+docker-compose logs -f database
+
+# Stop all services
+docker-compose down
+
+# Rebuild API service after code changes
+docker-compose build api && docker-compose up -d api
+```
+
+### Backend Development (Java/Spring Boot)
 ```bash
 cd backend
-./gradlew bootRun              # Start development server
-./gradlew test                 # Run JUnit tests
-./gradlew test --continuous    # Watch mode testing
-./gradlew flywayMigrate        # Database migrations
-./gradlew spotlessApply        # Auto-format code
+
+# Run application locally (requires PostgreSQL/Redis running)
+./gradlew bootRun
+
+# Run tests with TestContainers
+./gradlew test
+
+# Run specific test class
+./gradlew test --tests "com.docmgr.controller.HealthControllerTest"
+
+# Format code with Spotless
+./gradlew spotlessApply
+
+# Check code formatting
+./gradlew spotlessCheck
+
+# Build JAR
+./gradlew build
+
+# Run Flyway migrations manually
+./gradlew flywayMigrate
 ```
 
-### Frontend (React PWA)
+### Database Operations
 ```bash
-cd frontend
-npm run dev          # Start Vite dev server
-npm run build        # Build production PWA
-npm run test         # Run Vitest tests
-npm run lint         # ESLint + TypeScript checking
-```
+# Access PostgreSQL via Docker
+docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 
-### Docker Operations
-```bash
-docker-compose up -d              # Start all services
-docker-compose down               # Stop all services
-docker-compose logs -f [service]  # View service logs
+# Access pgAdmin (dev environment)
+# Navigate to http://localhost:8080
+
+# Access Redis Commander (dev environment)  
+# Navigate to http://localhost:8081
 ```
 
 ## Key Architecture Patterns

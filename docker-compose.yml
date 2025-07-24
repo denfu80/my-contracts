@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: docmgr-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-docmgr}
+      POSTGRES_USER: ${POSTGRES_USER:-docmgr_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_secure_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - docmgr-network
+
+  # Redis for caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: docmgr-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - docmgr-network
+
+  # Ollama for local LLM processing
+  ollama:
+    image: ollama/ollama:latest
+    container_name: docmgr-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_ORIGINS=http://localhost:3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - docmgr-network
+
+  # Spring Boot API
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: docmgr-api
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-production}
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB:-docmgr}
+      - POSTGRES_USER=${POSTGRES_USER:-docmgr_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme_secure_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - JWT_SECRET=${JWT_SECRET:-}
+      - UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:-52428800}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - uploads_data:/app/uploads
+      - temp_data:/app/temp
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - docmgr-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ollama_data:
+    driver: local
+  uploads_data:
+    driver: local
+  temp_data:
+    driver: local
+
+networks:
+  docmgr-network:
+    driver: bridge
