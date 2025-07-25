@@ -41,28 +41,65 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
    docker-compose up
    ```
 
-4. **Access Current Services**
+4. **Access Services**
    - **API**: http://localhost:3000/api/v1/health
+   - **LLM Health Dashboard**: http://localhost:3000/health-dashboard
    - **pgAdmin**: http://localhost:8080 (dev environment only)
    - **Redis Commander**: http://localhost:8081 (dev environment only)
 
-### ✅ What's Working Now (Package 1 Complete)
+### ✅ What's Working Now (Package 2 Complete)
 - **Production deployment** on Proxmox Docker node (192.168.4.8:3000)
 - **Spring Boot API** with health endpoint responding
+- **LLM Service Abstraction** with Gemini and Ollama provider support
+- **Health Dashboard** at `/health-dashboard` for monitoring LLM providers
 - **PostgreSQL database** with secure production configuration
-- **Redis cache** for performance and rate limiting
+- **Redis cache** for performance and rate limiting (+ LLM rate limiting)
 - **Git-based deployment** process with automated scripts
-- **Development tools** (pgAdmin, Redis Commander) in dev mode
+- **Development tools** (pgAdmin, Redis Commander) in dev mode with hot reload
 - **Backup automation** with rotation and compression
 
 ### 🔧 Development Commands
-```bash
-# Backend development
-cd backend
-./gradlew test          # Run tests
-./gradlew bootRun       # Start locally (requires services)
 
-# Database access
+#### **Local Development (Fastest - Recommended)**
+```bash
+# Start only dependencies
+docker-compose up -d database redis
+
+# Run application locally with hot reload
+cd backend
+./gradlew bootRun
+
+# Access points:
+# - API: http://localhost:3000/api/v1/health
+# - LLM Health Dashboard: http://localhost:3000/health-dashboard
+# - Debug port: 5005 (for IDE debugging)
+```
+
+#### **Docker Development with Hot Reload**
+```bash
+# Start development environment with automatic restart
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Features:
+# - Spring Boot DevTools hot reload
+# - JVM debug port 5005 exposed
+# - pgAdmin: http://localhost:8080 (admin@example.com / admin123)
+# - Redis Commander: http://localhost:8081
+```
+
+#### **Production Mode**
+```bash
+# Start production-like environment
+docker-compose up -d
+
+# Access:
+# - API: http://localhost:3000/api/v1/health  
+# - LLM Dashboard: http://localhost:3000/health-dashboard
+```
+
+#### **Database & Cache Access**
+```bash
+# PostgreSQL access
 docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 
 # Redis access  

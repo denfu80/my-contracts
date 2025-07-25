@@ -16,9 +16,13 @@ services:
       - LOG_LEVEL=DEBUG
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     volumes:
-      # Mount source code for hot reload
-      - ./backend/src:/app/src:ro
-      - ./backend/build.gradle:/app/build.gradle:ro
+      # Mount source code for hot reload (read-write for Gradle builds)
+      - ./backend/src:/app/src
+      - ./backend/build.gradle.kts:/app/build.gradle.kts:ro
+      - ./backend/settings.gradle.kts:/app/settings.gradle.kts:ro
+      - ./backend/gradle:/app/gradle:ro
+      # Mount build directory for compiled classes
+      - ./backend/build:/app/build
       # Volume for uploads and temp (development)
       - ./uploads:/app/uploads
       - ./temp:/app/temp
@@ -28,7 +32,7 @@ services:
     command: >
       sh -c "
         echo 'Starting development server with hot reload...' &&
-        ./gradlew bootRun --no-daemon
+        ./gradlew bootRun --no-daemon --continuous
       "
 
   # Expose database port for development tools
