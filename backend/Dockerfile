@@ -37,8 +37,8 @@ WORKDIR /app
 RUN mkdir -p /app/uploads /app/temp && \
     chown -R docmgr:docmgr /app
 
-# Copy built JAR from builder stage
-COPY --from=builder /app/build/libs/*.jar app.jar
+# Copy built JAR from builder stage (exclude plain JAR)
+COPY --from=builder /app/build/libs/*-SNAPSHOT.jar app.jar
 
 # Change ownership to non-root user
 RUN chown docmgr:docmgr app.jar
