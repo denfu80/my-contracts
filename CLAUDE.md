@@ -27,14 +27,15 @@ Personal Document Management Service - a self-hosted solution for automatically 
 
 ## Current Status & Next Actions
 
-**📍 Current Status**: Phase 1.1 OFFICIALLY COMPLETE ✅  
-**🎯 Next Phase**: Phase 1.2 - Git-Based Production Deployment (SIMPLIFIED - 1-2 hours)  
-**📋 Detailed status**: See `PHASE_1_DETAILED.md` for verification checklists and next steps
+**📍 Current Status**: Package 1 OFFICIALLY COMPLETE ✅  
+**🎯 Next Package**: Package 2 - LLM Service Abstraction Layer  
+**📋 Current progress**: See `DEVELOPMENT_PLAN.md` for package roadmap and next steps
 
-### Phase 1.1 Completion Summary
-✅ **Delivered**: Environment setup, basic Docker foundation, Spring Boot API with health endpoint  
-✅ **Verified Working**: All services start via `docker-compose up -d`, health endpoint responds  
-✅ **Production Ready**: Current system ready for Phase 1.2 infrastructure deployment
+### Package 1 Completion Summary
+✅ **Infrastructure**: Git-based production deployment on Proxmox Docker node (192.168.4.8)  
+✅ **Services**: Spring Boot API, PostgreSQL, Redis all running and healthy  
+✅ **Deployment**: Automated scripts for updates and backups  
+✅ **Production URL**: http://192.168.4.8:3000/api/v1/health responding correctly
 
 **📚 Complete architecture details**: See `REQUIREMENTS.md` for technical requirements  
 **🗂️ Technology stack decisions**: See `DEVELOPMENT_PLAN.md` for complete tech stack breakdown
@@ -43,18 +44,22 @@ Personal Document Management Service - a self-hosted solution for automatically 
 ## Development Commands
 
 **📋 Complete development commands**: See `README.md` for current quick start guide  
-**⚡ Detailed build/test commands**: See `PHASE_1_DETAILED.md` for comprehensive command reference
+**⚡ Production deployment**: See production section in `README.md` for deployment procedures
 
-### Quick Reference (Current Phase 1.1)
+### Quick Reference (Package 1 Complete)
 ```bash
-# Start production services
-docker-compose up -d
+# Local development
+docker-compose up -d  # Production services
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d  # With dev tools
 
-# Start development environment (with pgAdmin, Redis Commander)
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# Production (on 192.168.4.8)
+cd /opt/docmgr
+./scripts/deploy.sh   # Update deployment
+./scripts/backup.sh   # Backup database
 
-# Health check
-curl http://localhost:3000/api/v1/health
+# Health checks
+curl http://localhost:3000/api/v1/health     # Local
+curl http://192.168.4.8:3000/api/v1/health   # Production
 ```
 
 ## Architecture Patterns & Design Decisions
@@ -62,10 +67,11 @@ curl http://localhost:3000/api/v1/health
 **📚 Complete architecture patterns**: See `REQUIREMENTS.md` for detailed technical architecture  
 **🏗️ System design decisions**: See `DEVELOPMENT_PLAN.md` for technology choices and patterns
 
-### Current Implementation (Phase 1.1)
-- **Containerized services**: PostgreSQL + Redis + Spring Boot API
-- **Health monitoring**: Built-in health checks and service discovery
-- **Development tools**: pgAdmin + Redis Commander for local development
+### Current Implementation (Package 1 Complete)
+- **Production deployment**: Running on Proxmox Docker node with git-based updates
+- **Containerized services**: PostgreSQL + Redis + Spring Boot API with health checks
+- **Automation**: Deployment scripts, backup automation, container restart policies
+- **Development tools**: pgAdmin + Redis Commander available in dev mode
 
 ## Development Guidelines
 
@@ -88,22 +94,22 @@ curl http://localhost:3000/api/v1/health
 3. **WAIT** for user confirmation before next phase
 4. Update documentation to reflect actual implementation
 
-### Current Phase Status (PRODUCTION-FIRST APPROACH - SIMPLIFIED)
-- **Phase 1.1**: ✅ OFFICIALLY COMPLETE ✅ (Environment + Basic Docker + API)
-- **Phase 1.2**: 🎯 READY TO START (Git-Based Production Deployment - 1-2 hours)
-- **Phase 1.3**: 🔲 PENDING (Development Tools & Advanced Docker)
+### Current Package Status (PRODUCTION-FIRST APPROACH)
+- **Package 1**: ✅ OFFICIALLY COMPLETE ✅ (Infrastructure + Production Deployment)
+- **Package 2**: 🎯 READY TO START (LLM Service Abstraction Layer - 2-3 weeks)
+- **Package 3**: 🔲 PENDING (Document Upload & Storage)
+- **Package 4**: 🔲 PENDING (Mobile-First Web Interface)
+- **Package 5**: 🔲 PENDING (LLM Document Processing)
 
-### Phase Scope Reminders (PRODUCTION-FIRST - SIMPLIFIED)
-- **Phase 1.1**: ✅ Project structure + Basic Spring Boot + Core containers
-- **Phase 1.2**: 🎯 Git-based deployment to existing Proxmox Docker node (NO Terraform/Ansible)
-- **Phase 1.3**: 🔲 Development tools + Advanced Docker features
-- **Package 2**: 🔲 Document Upload & Storage (extends production deployment)
-- **Package 3**: 🔲 LLM Service Abstraction (extends production deployment)
+### Package Scope Reminders (PRODUCTION-FIRST APPROACH)
+- **Package 1**: ✅ Git-based production deployment on existing Docker infrastructure
+- **Package 2**: 🎯 LLM Service Abstraction (Gemini + Ollama providers with Spring)
+- **Package 3**: 🔲 Document Upload & Storage (File handling + database schema)
+- **Package 4**: 🔲 Mobile-First Web Interface (React PWA + Android share)
+- **Package 5**: 🔲 LLM Document Processing (Analysis pipeline + entity extraction)
 
 ## Project Documentation
 
 - `REQUIREMENTS.md` - Complete functional specifications
 - `DEVELOPMENT_PLAN.md` - 6-package implementation roadmap
-- `PHASE_1_DETAILED.md` - Granular implementation tasks
-- `PHASE_1_2_IMPLEMENTATION.md` - Git-based production deployment guide
 - `README.md` - Current status with production deployment instructions

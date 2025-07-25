@@ -7,9 +7,9 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
 
 ## 🎯 Current Status
 
-**✅ Phase 1.1 COMPLETE**: Environment setup, basic Docker foundation, Spring Boot API with health endpoint  
-**🎯 Next Phase**: Phase 1.2 - Git-Based Production Deployment (1-2 hours)  
-**📋 Detailed progress**: See [`PHASE_1_DETAILED.md`](PHASE_1_DETAILED.md) for verification checklists
+**✅ Package 1 COMPLETE**: Production infrastructure with git-based deployment to 192.168.4.8  
+**🎯 Next Package**: Package 2 - LLM Service Abstraction Layer  
+**📋 Development roadmap**: See [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md) for complete package strategy
 
 ## Quick Start
 
@@ -46,12 +46,14 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
    - **pgAdmin**: http://localhost:8080 (dev environment only)
    - **Redis Commander**: http://localhost:8081 (dev environment only)
 
-### ✅ What's Working Now (Phase 1.1)
-- **Spring Boot API** with health endpoint
-- **PostgreSQL database** with health checks
-- **Redis cache** for future session/rate limiting
-- **Development tools** (pgAdmin, Redis Commander)
-- **Docker containerization** with production and development modes
+### ✅ What's Working Now (Package 1 Complete)
+- **Production deployment** on Proxmox Docker node (192.168.4.8:3000)
+- **Spring Boot API** with health endpoint responding
+- **PostgreSQL database** with secure production configuration
+- **Redis cache** for performance and rate limiting
+- **Git-based deployment** process with automated scripts
+- **Development tools** (pgAdmin, Redis Commander) in dev mode
+- **Backup automation** with rotation and compression
 
 ### 🔧 Development Commands
 ```bash
@@ -67,45 +69,35 @@ docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 docker exec -it docmgr-redis redis-cli
 ```
 
-## 🚀 Production Deployment
+## 🚀 Production Deployment ✅ ACTIVE
 
-### Deploy to Existing Proxmox Docker Node
+### Current Production Environment
 
-For production deployment to your existing Proxmox Docker node:
+**Status**: ✅ Running on Proxmox Docker node  
+**URL**: http://192.168.4.8:3000/api/v1/health  
+**Location**: `/opt/docmgr` on 192.168.4.8
 
-1. **See detailed guide**: [`PHASE_1_2_IMPLEMENTATION.md`](PHASE_1_2_IMPLEMENTATION.md)
+### Update Process
+```bash
+# On Proxmox Docker node (192.168.4.8)
+cd /opt/docmgr
+./scripts/deploy.sh  # Automated: git pull + restart + health check
+```
 
-2. **Quick deployment**:
-   ```bash
-   # On your Proxmox Docker node
-   git clone <repository-url> /opt/docmgr
-   cd /opt/docmgr
-   cp .env.production .env  # Edit with your settings
-   docker-compose -f docker-compose.prod.yml up -d
-   ```
+### Backup Process
+```bash
+# On Proxmox Docker node
+./scripts/backup.sh  # PostgreSQL dump + compression + rotation
+```
 
-3. **Update process**:
-   ```bash
-   # For updates
-   cd /opt/docmgr
-   git pull origin main
-   docker-compose -f docker-compose.prod.yml up -d --build
-   ```
-
-4. **Production access**:
-   - **API**: `http://your-docker-node:3000/api/v1/health`
-   - **Application**: `http://your-docker-node:3000`
-
-### Automation Options
-- **Manual updates**: Git pull + container restart
-- **Cron job**: Scheduled automatic updates
-- **Webhook**: Trigger updates on git push
-- **CI/CD**: GitHub Actions deployment
+### Production Services
+- **API**: Spring Boot on port 3000 ✅
+- **Database**: PostgreSQL with secure password ✅  
+- **Cache**: Redis for rate limiting ✅
+- **Monitoring**: Container health checks ✅
 
 ## 📚 Complete Documentation
 
 - **[`REQUIREMENTS.md`](REQUIREMENTS.md)** - Complete project requirements and technical specifications
 - **[`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md)** - 6-package implementation roadmap with technology decisions
-- **[`PHASE_1_DETAILED.md`](PHASE_1_DETAILED.md)** - Granular implementation tasks and verification checklists
-- **[`PHASE_1_2_IMPLEMENTATION.md`](PHASE_1_2_IMPLEMENTATION.md)** - Git-based production deployment guide
-- **[`CLAUDE.md`](CLAUDE.md)** - Development guidance and phase discipline for Claude Code
+- **[`CLAUDE.md`](CLAUDE.md)** - Development guidance and package discipline for Claude Code
