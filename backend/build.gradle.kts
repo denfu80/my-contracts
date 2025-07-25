@@ -22,8 +22,19 @@ extra["springAiVersion"] = "1.0.0"
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.springframework.retry:spring-retry")
     implementation("org.springframework.ai:spring-ai-tika-document-reader")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
