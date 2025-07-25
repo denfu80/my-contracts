@@ -8,7 +8,7 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
 ## 🎯 Current Status
 
 **✅ Phase 1.1 COMPLETE**: Environment setup, basic Docker foundation, Spring Boot API with health endpoint  
-**🎯 Next Phase**: Phase 1.2 - Production Infrastructure Setup  
+**🎯 Next Phase**: Phase 1.2 - Git-Based Production Deployment (1-2 hours)  
 **📋 Detailed progress**: See [`PHASE_1_DETAILED.md`](PHASE_1_DETAILED.md) for verification checklists
 
 ## Quick Start
@@ -67,9 +67,45 @@ docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 docker exec -it docmgr-redis redis-cli
 ```
 
+## 🚀 Production Deployment
+
+### Deploy to Existing Proxmox Docker Node
+
+For production deployment to your existing Proxmox Docker node:
+
+1. **See detailed guide**: [`PHASE_1_2_IMPLEMENTATION.md`](PHASE_1_2_IMPLEMENTATION.md)
+
+2. **Quick deployment**:
+   ```bash
+   # On your Proxmox Docker node
+   git clone <repository-url> /opt/docmgr
+   cd /opt/docmgr
+   cp .env.production .env  # Edit with your settings
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+3. **Update process**:
+   ```bash
+   # For updates
+   cd /opt/docmgr
+   git pull origin main
+   docker-compose -f docker-compose.prod.yml up -d --build
+   ```
+
+4. **Production access**:
+   - **API**: `http://your-docker-node:3000/api/v1/health`
+   - **Application**: `http://your-docker-node:3000`
+
+### Automation Options
+- **Manual updates**: Git pull + container restart
+- **Cron job**: Scheduled automatic updates
+- **Webhook**: Trigger updates on git push
+- **CI/CD**: GitHub Actions deployment
+
 ## 📚 Complete Documentation
 
 - **[`REQUIREMENTS.md`](REQUIREMENTS.md)** - Complete project requirements and technical specifications
 - **[`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md)** - 6-package implementation roadmap with technology decisions
 - **[`PHASE_1_DETAILED.md`](PHASE_1_DETAILED.md)** - Granular implementation tasks and verification checklists
+- **[`PHASE_1_2_IMPLEMENTATION.md`](PHASE_1_2_IMPLEMENTATION.md)** - Git-based production deployment guide
 - **[`CLAUDE.md`](CLAUDE.md)** - Development guidance and phase discipline for Claude Code

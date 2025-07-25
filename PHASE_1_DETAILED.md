@@ -50,59 +50,95 @@ my-contracts/
 - [x] Redis connectivity confirmed
 
 **STATUS**: Phase 1.1 OFFICIALLY COMPLETE ✅
+**NEXT**: Phase 1.2 - Simplified Production Deployment (1-2 hours)
 
-### 1.2 Production Infrastructure Setup
-**Duration**: 3-4 days (NEW - INFRASTRUCTURE FOCUS)
+### 1.2 Production Deployment Setup (SIMPLIFIED)
+**Duration**: 1-2 hours (GIT-BASED DEPLOYMENT)
 
-#### Tasks  
-- [ ] Create Terraform configuration for Proxmox VM provisioning
-- [ ] Set up Ansible playbooks for server configuration and security hardening
-- [ ] Configure Traefik reverse proxy with SSL/TLS certificates
-- [ ] Set up Prometheus + Grafana monitoring stack
-- [ ] Create automated backup system for PostgreSQL
-- [ ] Configure CI/CD pipeline for automated deployment
-- [ ] Set up log aggregation and management
-- [ ] Configure firewall and network security
+#### Approach: Git-Based Deployment to Existing Docker Node
+**Priority**: Simple production deployment using existing infrastructure
 
-#### Deliverables
+##### Tasks
+- [ ] Create production docker-compose.yml (without dev tools)
+- [ ] Set up git-based deployment process on Proxmox Docker node
+- [ ] Configure environment variables for production
+- [ ] Test deployment and container startup
+- [ ] Document update/restart procedure
+- [ ] Set up basic PostgreSQL backup solution
+
+##### Deployment Strategy
+**Manual Deployment**:
+1. Clone repository on Proxmox Docker node
+2. Configure environment variables
+3. Run production docker-compose
+4. For updates: git pull + restart containers
+
+**Optional Automation**:
+- Cron job for scheduled updates
+- GitHub webhook for automatic deployment
+- CI/CD pipeline with SSH deployment
+
+##### Deliverables
+- `docker-compose.prod.yml` - Production container configuration
+- Deployment documentation for Proxmox Docker node
+- Environment configuration template
+- Basic backup strategy
+- Update procedure documentation
+
+#### Phase 1.2 Deliverables (SIMPLIFIED)
 ```bash
-infrastructure/
-├── terraform/
-│   ├── main.tf                 # Proxmox VM definitions  
-│   ├── variables.tf            # Environment variables
-│   ├── outputs.tf              # Network IPs, etc.
-│   └── modules/
-│       ├── vm/                 # VM module
-│       └── network/            # Network configuration
-├── ansible/
-│   ├── site.yml                # Main deployment playbook
-│   ├── inventory/
-│   │   └── production.yml      # Server inventory
-│   └── roles/
-│       ├── docker/             # Docker installation
-│       ├── security/           # Server hardening
-│       ├── monitoring/         # Prometheus/Grafana
-│       └── backup/             # Backup configuration
-├── traefik/
-│   ├── traefik.yml             # Reverse proxy config
-│   └── dynamic/                # Service discovery
-└── monitoring/
-    ├── prometheus.yml          # Metrics collection
-    ├── grafana/
-    │   └── dashboards/         # Custom dashboards
-    └── alertmanager.yml        # Alert rules
+my-contracts/
+├── docker-compose.prod.yml     # Production containers (no dev tools)
+├── .env.production             # Production environment template
+├── scripts/                    # Optional deployment helpers
+│   ├── deploy.sh              # Git pull + restart containers
+│   └── backup.sh              # Simple PostgreSQL backup
+└── docs/
+    └── DEPLOYMENT.md          # Deployment instructions for Proxmox
 ```
 
-#### Phase Completion Verification
-- [ ] **USER VERIFICATION REQUIRED**: Confirm infrastructure meets requirements
-- [ ] Terraform successfully provisions VMs on Proxmox
-- [ ] Ansible configures servers without errors
-- [ ] Traefik serves HTTPS with valid certificates
-- [ ] Grafana dashboards show system metrics  
-- [ ] CI/CD pipeline deploys to production
-- [ ] Database backups are running and tested
+#### Git-Based Deployment Structure
+```bash
+# On Proxmox Docker Node:
+/opt/docmgr/
+├── .git/                      # Git repository
+├── docker-compose.prod.yml    # Production config
+├── .env                       # Production environment
+├── backend/                   # Spring Boot application
+└── data/                      # Persistent volumes
+    ├── postgres/              # Database data
+    └── redis/                 # Cache data
+```
 
-### ~~1.2 Advanced Docker Features & Development Tools~~ (MOVED TO 1.3)
+#### Phase 1.2 Completion Verification
+
+##### Git-Based Deployment Verification
+- [ ] Repository successfully cloned on Proxmox Docker node
+- [ ] Production docker-compose.yml configured and tested
+- [ ] Environment variables properly set for production
+- [ ] All containers start successfully and pass health checks
+- [ ] API health endpoint accessible from network
+- [ ] Database and Redis connectivity confirmed
+
+##### Update Process Verification
+- [ ] Git pull updates work correctly
+- [ ] Container restart process functions properly
+- [ ] No data loss during updates
+- [ ] Rollback process available if needed
+
+##### Optional Automation Verification
+- [ ] Cron job scheduling works (if implemented)
+- [ ] Webhook deployment functions (if implemented)
+- [ ] CI/CD pipeline deploys successfully (if implemented)
+
+##### Final Phase 1.2 Verification
+- [ ] **USER VERIFICATION REQUIRED**: Production deployment meets requirements
+- [ ] Application accessible from intranet via Docker node
+- [ ] Basic backup solution in place and tested
+- [ ] Update procedures documented and verified
+- [ ] System ready for Package 2 development and deployment
+
+### 1.3 Advanced Docker Features & Development Tools (MOVED FROM 1.2)
 **Duration**: 2-3 days (ADJUSTED SCOPE)
 
 #### Tasks (REMAINING AFTER 1.1 COMPLETION)

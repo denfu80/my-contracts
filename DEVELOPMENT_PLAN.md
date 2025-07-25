@@ -10,40 +10,35 @@ This document outlines the development strategy for building a self-hosted docum
 
 ## Phase 1: Foundation Packages (MVP) - REORGANIZED FOR PRODUCTION-FIRST
 
-### Package 1: Infrastructure & Production Deployment Setup
-**Timeline**: 1-2 weeks  
+### Package 1: Infrastructure & Production Deployment Setup (SIMPLIFIED)
+**Timeline**: 1-2 hours (SIMPLIFIED - Git-based deployment)  
 **Priority**: Critical foundation
 
-#### Deliverables
-- **Terraform configuration** for Proxmox VM provisioning  
-- **Ansible playbooks** for server configuration and security hardening
-- **Docker Compose production setup** with multi-container orchestration
-- **Basic Spring Boot API** with health endpoints for deployment verification
-- **PostgreSQL database** with initial schema and backup configuration
-- **Redis caching layer** for performance and session management
-- **Reverse proxy** (Traefik/Nginx) with SSL/TLS certificates
-- **Monitoring stack** (Prometheus + Grafana) for production visibility
-- **CI/CD pipeline** for automated deployment to your intranet
+#### Deliverables (SIMPLIFIED)
+- **Production Docker Compose** configuration without development tools
+- **Git-based deployment** to existing Proxmox Docker node
+- **Basic Spring Boot API** with health endpoints ✅ COMPLETE
+- **PostgreSQL database** with initial schema ✅ COMPLETE
+- **Redis caching layer** for performance and session management ✅ COMPLETE
+- **Environment configuration** template for production
+- **Simple backup solution** for database
+- **Update/deployment procedure** documentation
 
-#### Technical Implementation
-- **Infrastructure as Code**: Terraform Proxmox provider for VM management
-- **Configuration Management**: Ansible for server setup, Docker, security hardening
-- **Container Orchestration**: Docker Compose with production-grade configurations
-- **Service Discovery**: Traefik for reverse proxy and automatic SSL with Let's Encrypt
-- **Database Management**: PostgreSQL with automated backups and health monitoring
-- **Monitoring**: Prometheus + Grafana + AlertManager for production insights
-- **CI/CD**: GitHub Actions/GitLab CI with automated testing and deployment
-- **Basic API**: Spring Boot with health endpoints and configuration management
+#### Technical Implementation (SIMPLIFIED)
+- **Git-Based Deployment**: Clone repository on existing Docker node, git pull for updates
+- **Production Docker Compose**: Clean configuration without dev tools (pgAdmin, Redis Commander)
+- **Container Management**: Standard Docker Compose with health checks and restart policies
+- **Environment Management**: .env file configuration for production settings
+- **Simple Backup**: Basic PostgreSQL dump script with rotation
+- **Update Process**: Git pull + container restart for deployments
 
-#### Success Criteria
-- **Infrastructure**: Terraform provisions VMs on Proxmox successfully
-- **Configuration**: Ansible configures servers with Docker and security hardening  
+#### Success Criteria (SIMPLIFIED)
+- **Deployment**: Application running on existing Proxmox Docker node
+- **Access**: API accessible from intranet (GET /api/v1/health)
 - **Services**: All containers start and pass health checks
-- **Monitoring**: Grafana dashboards show system metrics and alerts
-- **SSL**: HTTPS endpoints accessible with valid certificates
-- **CI/CD**: Pipeline deploys changes automatically to intranet
-- **Backup**: Database backups running and tested
-- **API**: Health endpoint responds (GET /api/v1/health) from production URL
+- **Updates**: Simple git pull + restart process works
+- **Backup**: Database backup script functional
+- **Documentation**: Clear deployment and update procedures
 
 #### File Structure (Production-First)
 ```
@@ -72,7 +67,7 @@ This document outlines the development strategy for building a self-hosted docum
 
 ---
 
-### Package 2: Document Upload & Storage (MOVED UP)
+### Package 2: LLM Service Abstraction Layer
 **Timeline**: 2-3 weeks  
 **Priority**: Core functionality - extends Package 1 infrastructure
 
@@ -268,17 +263,17 @@ src/
 
 ---
 
-## Package Dependencies (PRODUCTION-FIRST APPROACH)
+## Package Dependencies (PRODUCTION-FIRST APPROACH - SIMPLIFIED)
 
 ```
-Package 1 (Infrastructure + Production Deployment)
-    ↓ (Deploy after each package)
-Package 2 (Document Upload & Storage) → Production Deployment v2
-    ↓ (Deploy after each package)
-Package 3 (LLM Service Abstraction) → Production Deployment v3
-    ↓ (Deploy after each package)
+Package 1 (Git-Based Production Deployment) ✅ 1-2 hours
+    ↓ (Deploy after each package via git pull)
+Package 2 (LLM Service Abstraction) → Production Deployment v2
+    ↓ (Deploy after each package via git pull)
+Package 3 (Document Upload & Storage) → Production Deployment v3
+    ↓ (Deploy after each package via git pull)
 Package 4 (Mobile-First Web Interface) → Production Deployment v4
-    ↓ (Deploy after each package)
+    ↓ (Deploy after each package via git pull)
 Package 5 (LLM Document Processing) → Production Deployment v5 (MVP)
 ```
 

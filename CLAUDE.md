@@ -28,7 +28,7 @@ Personal Document Management Service - a self-hosted solution for automatically 
 ## Current Status & Next Actions
 
 **📍 Current Status**: Phase 1.1 OFFICIALLY COMPLETE ✅  
-**🎯 Next Phase**: Phase 1.2 - Production Infrastructure Setup  
+**🎯 Next Phase**: Phase 1.2 - Git-Based Production Deployment (SIMPLIFIED - 1-2 hours)  
 **📋 Detailed status**: See `PHASE_1_DETAILED.md` for verification checklists and next steps
 
 ### Phase 1.1 Completion Summary
@@ -88,14 +88,14 @@ curl http://localhost:3000/api/v1/health
 3. **WAIT** for user confirmation before next phase
 4. Update documentation to reflect actual implementation
 
-### Current Phase Status (PRODUCTION-FIRST APPROACH)
+### Current Phase Status (PRODUCTION-FIRST APPROACH - SIMPLIFIED)
 - **Phase 1.1**: ✅ OFFICIALLY COMPLETE ✅ (Environment + Basic Docker + API)
-- **Phase 1.2**: 🎯 READY TO START (Production Infrastructure Setup)
+- **Phase 1.2**: 🎯 READY TO START (Git-Based Production Deployment - 1-2 hours)
 - **Phase 1.3**: 🔲 PENDING (Development Tools & Advanced Docker)
 
-### Phase Scope Reminders (PRODUCTION-FIRST)
+### Phase Scope Reminders (PRODUCTION-FIRST - SIMPLIFIED)
 - **Phase 1.1**: ✅ Project structure + Basic Spring Boot + Core containers
-- **Phase 1.2**: 🎯 Production infrastructure (Terraform + Ansible + Monitoring + CI/CD)
+- **Phase 1.2**: 🎯 Git-based deployment to existing Proxmox Docker node (NO Terraform/Ansible)
 - **Phase 1.3**: 🔲 Development tools + Advanced Docker features
 - **Package 2**: 🔲 Document Upload & Storage (extends production deployment)
 - **Package 3**: 🔲 LLM Service Abstraction (extends production deployment)
@@ -105,4 +105,5 @@ curl http://localhost:3000/api/v1/health
 - `REQUIREMENTS.md` - Complete functional specifications
 - `DEVELOPMENT_PLAN.md` - 6-package implementation roadmap
 - `PHASE_1_DETAILED.md` - Granular implementation tasks
-- `PROJECT_CONTEXT.md` - Current status and next actions
+- `PHASE_1_2_IMPLEMENTATION.md` - Git-based production deployment guide
+- `README.md` - Current status with production deployment instructions
