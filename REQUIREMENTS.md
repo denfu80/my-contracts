@@ -1,5 +1,7 @@
 # Personal Document Management Service - Requirements
 
+> **🏗️ FOUNDATION DOCUMENT**: This document is the single source of truth for all project requirements, features, and technical specifications. All implementation decisions and other documentation files reference this as the authoritative source.
+
 ## Project Overview
 A self-hosted document management service that automatically processes contracts, bills, and forwarded emails using LLM technology to organize, analyze, and provide insights on personal documents.
 

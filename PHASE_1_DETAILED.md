@@ -1,5 +1,9 @@
 # Phase 1 - Detailed Implementation Guide (PRODUCTION-FIRST)
 
+> **📋 Reference Documents**:  
+> - [`REQUIREMENTS.md`](REQUIREMENTS.md) - Foundation document for all features and technical specifications  
+> - [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md) - High-level package strategy and technology decisions
+
 ## Package 1: Infrastructure & Production Deployment Setup
 
 ### 1.1 Environment Setup + Basic Docker Foundation ✅

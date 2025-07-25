@@ -2,113 +2,70 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Documentation Hierarchy & References
+
+### 📋 **CRITICAL: Single Source of Truth**
+- **`REQUIREMENTS.md`**: THE foundation document - all project requirements, features, and technical specifications
+- **`DEVELOPMENT_PLAN.md`**: High-level 6-package development strategy with timelines  
+- **`PHASE_1_DETAILED.md`**: Granular implementation tasks, file structures, and success criteria
+- **`README.md`**: Current project status and quick start instructions
+
+### 🔄 **Documentation Discipline Rules**
+- **REQUIREMENTS.md is the single source of truth** for all features and technical specifications
+- **Never duplicate information across files** - use references instead
+- **Each document has a specific role** in the hierarchy  
+- **When updating features**: Update REQUIREMENTS.md first, then reference it
+- **Keep documents focused** on their specific purpose only
+
 ## Project Overview
 
-Personal Document Management Service - a self-hosted Java/Spring Boot application for automatically processing contracts, bills, and emails using LLM technology. Currently implementing Package 1 (Backend Foundation).
+Personal Document Management Service - a self-hosted solution for automatically processing contracts, bills, and forwarded emails using LLM technology.
 
-## Architecture & Tech Stack
+**📚 Complete project details**: See `REQUIREMENTS.md`  
+**📋 Development strategy**: See `DEVELOPMENT_PLAN.md`  
+**⚡ Current implementation tasks**: See `PHASE_1_DETAILED.md`
 
-- **Backend**: Java 17+ + Spring Boot 3.5.4 + Spring AI 1.0.0 + PostgreSQL 15
-- **Cache**: Redis 7 + Spring Data Redis  
-- **LLM Integration**: Gemini Flash 1.5 API + External Ollama service with strategy pattern
-- **Document Processing**: Spring AI Tika Document Reader + Apache Tika + PDFBox
-- **Database**: PostgreSQL with Flyway migrations
-- **Infrastructure**: Docker Compose with health checks
-- **Testing**: JUnit 5 + Spring Boot Test
-- **Container Orchestration**: Docker Compose with health checks
+## Current Status & Next Actions
 
-## External Services
+**📍 Current Status**: Phase 1.1 OFFICIALLY COMPLETE ✅  
+**🎯 Next Phase**: Phase 1.2 - Production Infrastructure Setup  
+**📋 Detailed status**: See `PHASE_1_DETAILED.md` for verification checklists and next steps
 
-- **Ollama**: Will be deployed as separate service on your network (Package 2)
-- **LLM Providers**: External API endpoints (Gemini) and local Ollama instance
+### Phase 1.1 Completion Summary
+✅ **Delivered**: Environment setup, basic Docker foundation, Spring Boot API with health endpoint  
+✅ **Verified Working**: All services start via `docker-compose up -d`, health endpoint responds  
+✅ **Production Ready**: Current system ready for Phase 1.2 infrastructure deployment
 
-## Current Status
+**📚 Complete architecture details**: See `REQUIREMENTS.md` for technical requirements  
+**🗂️ Technology stack decisions**: See `DEVELOPMENT_PLAN.md` for complete tech stack breakdown
 
-**Phase**: Package 1 - Backend Foundation ✅ (CORRECTED)
-**Implementation Progress**: Spring Boot API, Docker services, database schema
-**Next**: Package 2 - LLM Service Abstraction Layer
 
 ## Development Commands
 
-### Docker Development (Recommended)
+**📋 Complete development commands**: See `README.md` for current quick start guide  
+**⚡ Detailed build/test commands**: See `PHASE_1_DETAILED.md` for comprehensive command reference
+
+### Quick Reference (Current Phase 1.1)
 ```bash
-# Phase 1.1: Start core services (PostgreSQL + Redis + API)
+# Start production services
 docker-compose up -d
 
-# View logs for specific service
-docker-compose logs -f api
-docker-compose logs -f database
-
-# Stop all services
-docker-compose down
-
-# Rebuild API service after code changes
-docker-compose build api && docker-compose up -d api
-
-# Development with hot reload (Package 1.2)
+# Start development environment (with pgAdmin, Redis Commander)
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Health check
+curl http://localhost:3000/api/v1/health
 ```
 
-### Backend Development (Java/Spring Boot)
-```bash
-cd backend
+## Architecture Patterns & Design Decisions
 
-# Run application locally (requires PostgreSQL/Redis running)
-./gradlew bootRun
+**📚 Complete architecture patterns**: See `REQUIREMENTS.md` for detailed technical architecture  
+**🏗️ System design decisions**: See `DEVELOPMENT_PLAN.md` for technology choices and patterns
 
-# Run tests with TestContainers
-./gradlew test
-
-# Run specific test class
-./gradlew test --tests "com.docmgr.controller.HealthControllerTest"
-
-# Format code with Spotless
-./gradlew spotlessApply
-
-# Check code formatting
-./gradlew spotlessCheck
-
-# Build JAR
-./gradlew build
-
-# Run Flyway migrations manually
-./gradlew flywayMigrate
-```
-
-### Database Operations
-```bash
-# Access PostgreSQL via Docker
-docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
-
-# Access Redis via Docker
-docker exec -it docmgr-redis redis-cli
-
-# Development tools (pgAdmin, Redis Commander) available in Package 1.2
-```
-
-## Key Architecture Patterns
-
-### Document Processing Pipeline
-1. **Upload/Email** → PDF text extraction (Tika/PDFBox) → OCR if needed
-2. **LLM Analysis** → Entity extraction → Classification → Structured storage
-3. **Search & Retrieval** → Full-text search → AI-powered categorization
-
-### LLM Service Abstraction
-- Strategy pattern for switching between Gemini API and Ollama
-- Rate limiting and token usage tracking
-- Async processing with PostgreSQL job queue
-
-### Security & Privacy Model
-- **Local-first**: All data processing happens locally
-- **Zero external transmission**: Complete local control of documents
-- **Containerized deployment**: Docker isolation + HTTPS/TLS
-
-## Mobile-First PWA Design
-
-- **Android Share API integration**: Accept shared files from mobile
-- **Responsive design**: Tailwind CSS with mobile-first breakpoints
-- **Offline capability**: Service workers + local storage
-- **Performance targets**: Sub-second search, 95%+ document accuracy
+### Current Implementation (Phase 1.1)
+- **Containerized services**: PostgreSQL + Redis + Spring Boot API
+- **Health monitoring**: Built-in health checks and service discovery
+- **Development tools**: pgAdmin + Redis Commander for local development
 
 ## Development Guidelines
 

@@ -1,7 +1,12 @@
 # Development Plan - Personal Document Management Service
 
+> **📋 Foundation Reference**: This document references [`REQUIREMENTS.md`](REQUIREMENTS.md) for complete feature specifications and technical requirements.
+
 ## Overview
 This document outlines the development strategy for building a self-hosted document management service in 5 foundational packages, followed by advanced features in Phase 2.
+
+**📚 Complete project requirements**: See [`REQUIREMENTS.md`](REQUIREMENTS.md)  
+**⚡ Current implementation tasks**: See [`PHASE_1_DETAILED.md`](PHASE_1_DETAILED.md)
 
 ## Phase 1: Foundation Packages (MVP) - REORGANIZED FOR PRODUCTION-FIRST
 

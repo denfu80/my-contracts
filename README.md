@@ -2,10 +2,14 @@
 
 A self-hosted solution for automatically processing contracts, bills, and forwarded emails using LLM technology.
 
-## Project Status
+> **📋 Complete project details**: See [`REQUIREMENTS.md`](REQUIREMENTS.md) for full requirements and features  
+> **🗂️ Development roadmap**: See [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md) for complete development strategy
 
-**Current Phase**: Package 1.1 - Environment Setup ✅  
-**Implementation Progress**: Foundation & Docker Setup
+## 🎯 Current Status
+
+**✅ Phase 1.1 COMPLETE**: Environment setup, basic Docker foundation, Spring Boot API with health endpoint  
+**🎯 Next Phase**: Phase 1.2 - Production Infrastructure Setup  
+**📋 Detailed progress**: See [`PHASE_1_DETAILED.md`](PHASE_1_DETAILED.md) for verification checklists
 
 ## Quick Start
 
@@ -37,98 +41,35 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
    docker-compose up
    ```
 
-4. **Access Services**
-   - API: http://localhost:3000
-   - Health Check: http://localhost:3000/api/v1/health
-   - pgAdmin: http://localhost:8080 (dev only)
-   - Redis Commander: http://localhost:8081 (dev only)
+4. **Access Current Services**
+   - **API**: http://localhost:3000/api/v1/health
+   - **pgAdmin**: http://localhost:8080 (dev environment only)
+   - **Redis Commander**: http://localhost:8081 (dev environment only)
 
-### Manual Backend Development
+### ✅ What's Working Now (Phase 1.1)
+- **Spring Boot API** with health endpoint
+- **PostgreSQL database** with health checks
+- **Redis cache** for future session/rate limiting
+- **Development tools** (pgAdmin, Redis Commander)
+- **Docker containerization** with production and development modes
 
+### 🔧 Development Commands
 ```bash
+# Backend development
 cd backend
+./gradlew test          # Run tests
+./gradlew bootRun       # Start locally (requires services)
 
-# Run tests
-./gradlew test
+# Database access
+docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 
-# Start application (requires PostgreSQL and Redis running)
-./gradlew bootRun
+# Redis access  
+docker exec -it docmgr-redis redis-cli
 ```
 
-## Architecture
+## 📚 Complete Documentation
 
-### Technology Stack
-- **Backend**: Java 21 + Spring Boot 3.x + Spring Data JPA
-- **Database**: PostgreSQL 15 with Flyway migrations
-- **Cache**: Redis 7
-- **LLM**: Gemini Flash 1.5 API + Ollama (local)
-- **Document Processing**: Apache Tika + PDFBox + Tesseract OCR
-- **Infrastructure**: Docker Compose
-
-### Services
-
-| Service | Port | Description |
-|---------|------|-------------|
-| API | 3000 | Spring Boot REST API |
-| PostgreSQL | 5432 | Primary database |
-| Redis | 6379 | Caching and rate limiting |
-| Ollama | 11434 | Local LLM processing |
-| pgAdmin | 8080 | Database admin (dev only) |
-| Redis Commander | 8081 | Redis admin (dev only) |
-
-## Development
-
-### Project Structure
-```
-├── backend/                 # Spring Boot API
-│   ├── src/main/java/       # Java source code
-│   ├── src/main/resources/  # Configuration and migrations
-│   └── src/test/            # Tests
-├── frontend/                # React PWA (Package 4)
-├── infrastructure/          # Terraform & Ansible (Package 6)
-├── docker-compose.yml       # Production containers
-└── docker-compose.dev.yml   # Development overrides
-```
-
-### Key Features (Planned)
-- **Document Upload**: Web interface + email forwarding
-- **LLM Analysis**: Contract/bill entity extraction
-- **Search**: Full-text search with AI categorization
-- **Mobile PWA**: Android Share API integration
-- **Privacy**: Local-first processing, no external data transmission
-
-### Database Schema
-- `documents` - File metadata and content
-- `llm_providers` - LLM service configurations
-- `document_analysis` - AI processing results
-- `llm_usage_stats` - Usage tracking and costs
-
-## Next Steps
-
-**Package 1 Remaining Tasks:**
-- [ ] Fix Gradle wrapper download
-- [ ] Test Docker Compose setup
-- [ ] Verify database migrations
-- [ ] Configure LLM providers
-
-**Upcoming Packages:**
-- **Package 2**: LLM Service Abstraction Layer
-- **Package 3**: Document Upload & Storage
-- **Package 4**: Mobile-First Web Interface
-- **Package 5**: LLM Document Processing
-- **Package 6**: Deployment & Infrastructure
-
-## Configuration
-
-Key environment variables (see `.env.example`):
-- `POSTGRES_*` - Database connection
-- `GEMINI_API_KEY` - Google Gemini API key
-- `OLLAMA_*` - Local LLM configuration
-- `UPLOAD_MAX_SIZE` - File upload limits
-
-## Documentation
-
-- `REQUIREMENTS.md` - Complete project requirements
-- `DEVELOPMENT_PLAN.md` - 6-package implementation roadmap  
-- `PHASE_1_DETAILED.md` - Granular implementation tasks
-- `CLAUDE.md` - Claude Code development guidance
+- **[`REQUIREMENTS.md`](REQUIREMENTS.md)** - Complete project requirements and technical specifications
+- **[`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md)** - 6-package implementation roadmap with technology decisions
+- **[`PHASE_1_DETAILED.md`](PHASE_1_DETAILED.md)** - Granular implementation tasks and verification checklists
+- **[`CLAUDE.md`](CLAUDE.md)** - Development guidance and phase discipline for Claude Code
