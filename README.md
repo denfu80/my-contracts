@@ -41,7 +41,18 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
    docker-compose up
    ```
 
-4. **Access Services**
+4. **Configure Environment (Important!)**
+   ```bash
+   # The .env file is automatically loaded by docker-compose
+   # Edit .env file to configure your API keys and settings:
+   nano .env
+   
+   # Key settings:
+   # GEMINI_API_KEY=your_api_key_here
+   # OLLAMA_BASE_URL=http://your_ollama_host:11434
+   ```
+
+5. **Access Services**
    - **API**: http://localhost:3000/api/v1/health
    - **LLM Health Dashboard**: http://localhost:3000/health-dashboard
    - **pgAdmin**: http://localhost:8080 (dev environment only)
@@ -97,6 +108,95 @@ docker-compose up -d
 # - LLM Dashboard: http://localhost:3000/health-dashboard
 ```
 
+#### **Build & Test**
+```bash
+# Build the application
+cd backend
+./gradlew build
+
+# Run tests only
+./gradlew test
+
+# Clean build (removes previous build artifacts)
+./gradlew clean build
+
+# Check code formatting (Spotless)
+./gradlew spotlessCheck
+
+# Apply code formatting
+./gradlew spotlessApply
+```
+
+#### **Rebuild & Deploy Changes**
+```bash
+# After making code changes, rebuild and restart:
+cd backend
+./gradlew build
+
+# Rebuild Docker containers with latest code:
+docker-compose up -d --build
+
+# Or force complete rebuild:
+docker-compose down
+docker-compose up -d --build
+```
+
+#### **Debugging Instructions**
+
+##### **IntelliJ IDEA Setup**
+```bash
+# 1. Start application in debug mode
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# OR for local development:
+./gradlew bootRun
+
+# 2. In IntelliJ: Run > Edit Configurations > Add > Remote JVM Debug
+# Host: localhost
+# Port: 5005
+# Command line args: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+
+# 3. Set breakpoints and click Debug
+```
+
+##### **VS Code Setup**
+```bash
+# Create .vscode/launch.json with:
+```
+```json
+{
+    "type": "java",
+    "name": "Debug Spring Boot",
+    "request": "attach",
+    "hostName": "localhost",
+    "port": 5005
+}
+```
+
+##### **View Application Logs**
+```bash
+# Docker logs (live follow)
+docker-compose logs -f api
+
+# All services logs
+docker-compose logs -f
+
+# Specific timeframe
+docker-compose logs --since="1h" api
+
+# Last 100 lines
+docker-compose logs --tail=100 api
+```
+
+##### **Environment Variable Debugging**
+```bash
+# Check what environment variables are loaded
+docker exec -it docmgr-api env | grep -E "(GEMINI|OLLAMA|POSTGRES)"
+
+# Check Spring Boot configuration
+curl http://localhost:3000/actuator/env
+# Note: Only works if actuator endpoints are enabled
+```
+
 #### **Database & Cache Access**
 ```bash
 # PostgreSQL access
@@ -104,6 +204,72 @@ docker exec -it docmgr-postgres psql -U docmgr_user -d docmgr
 
 # Redis access  
 docker exec -it docmgr-redis redis-cli
+
+# Check Redis keys for LLM data
+docker exec -it docmgr-redis redis-cli keys "*llm*"
+docker exec -it docmgr-redis redis-cli keys "*rate_limit*"
+```
+
+## 🔧 **Environment Configuration (.env File)**
+
+### **How .env Works with Docker**
+
+The `.env` file is **automatically loaded by docker-compose** and injects environment variables into containers:
+
+```bash
+# 1. Docker Compose reads .env file automatically
+# 2. Variables are passed to containers via docker-compose.yml
+# 3. Spring Boot reads them as environment variables
+# 4. Application.properties uses ${VARIABLE_NAME:default} syntax
+```
+
+### **Verification Process**
+
+```bash
+# 1. Check if .env file exists and has correct values
+cat .env | grep -E "(GEMINI|OLLAMA)"
+
+# 2. Verify Docker containers receive the variables
+docker exec -it docmgr-api env | grep -E "(GEMINI|OLLAMA)"
+
+# 3. Check Spring Boot actually uses these values
+curl http://localhost:3000/api/v1/llm/health
+```
+
+### **Environment Variable Flow**
+
+```
+.env file → docker-compose.yml → Container Environment → Spring Boot → Application
+```
+
+**Example:**
+```bash
+# In .env file:
+OLLAMA_BASE_URL=http://192.168.4.5:11434
+
+# In docker-compose.yml:
+- OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
+
+# In application.properties:
+app.llm.ollama.base-url=${OLLAMA_BASE_URL:http://ollama:11434}
+
+# Result: Application uses http://192.168.4.5:11434
+```
+
+### **Troubleshooting .env Issues**
+
+```bash
+# Problem: Changes not taking effect
+# Solution: Restart containers to reload environment
+docker-compose down && docker-compose up -d
+
+# Problem: Variables not found
+# Check: docker-compose.yml must reference the variable
+- VARIABLE_NAME=${VARIABLE_NAME:-default_value}
+
+# Problem: .env file ignored
+# Check: .env must be in same directory as docker-compose.yml
+ls -la .env docker-compose.yml
 ```
 
 ## 🚀 Production Deployment ✅ ACTIVE
