@@ -1,5 +1,6 @@
 package com.docmgr.llm.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,12 +8,22 @@ import java.util.Map;
 /**
  * Response from an LLM provider containing generated text and metadata
  */
+@Schema(description = "Response from LLM provider with generated text and metadata")
 public class LLMResponse {
     
+    @Schema(description = "Generated text response from the LLM", example = "Quantum computing is a revolutionary technology...")
     private String text;
+    
+    @Schema(description = "Number of tokens used for this generation", example = "42")
     private int tokensUsed;
+    
+    @Schema(description = "Timestamp when the response was generated")
     private LocalDateTime timestamp;
+    
+    @Schema(description = "ID of the provider that generated this response", example = "gemini")
     private String providerId;
+    
+    @Schema(description = "Additional metadata about the response (response time, model used, etc.)")
     private Map<String, Object> metadata = new HashMap<>();
     
     public LLMResponse() {

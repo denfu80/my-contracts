@@ -132,6 +132,13 @@ cd backend
 ```
 
 #### **LLM API Testing (Package 2 Complete)**
+
+**🌐 Interactive API Documentation (Swagger UI):**
+- **Swagger UI**: http://localhost:3000/swagger-ui/index.html
+- **OpenAPI JSON**: http://localhost:3000/v3/api-docs
+- **Production Swagger**: http://192.168.4.8:3000/swagger-ui/index.html
+
+**📋 Command Line Testing:**
 ```bash
 # Health checks
 curl http://localhost:3000/api/v1/health                # General API health
