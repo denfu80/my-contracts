@@ -8,7 +8,8 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
 ## 🎯 Current Status
 
 **✅ Package 1 COMPLETE**: Production infrastructure with git-based deployment to 192.168.4.8  
-**🎯 Next Package**: Package 2 - LLM Service Abstraction Layer  
+**✅ Package 2 COMPLETE**: LLM Service Abstraction Layer with Gemini & Ollama providers  
+**🎯 Next Package**: Package 3 - Document Processing Pipeline  
 **📋 Development roadmap**: See [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md) for complete package strategy
 
 ## Quick Start
@@ -61,8 +62,11 @@ A self-hosted solution for automatically processing contracts, bills, and forwar
 ### ✅ What's Working Now (Package 2 Complete)
 - **Production deployment** on Proxmox Docker node (192.168.4.8:3000)
 - **Spring Boot API** with health endpoint responding
-- **LLM Service Abstraction** with Gemini and Ollama provider support
-- **Health Dashboard** at `/health-dashboard` for monitoring LLM providers
+- **✅ LLM Service Abstraction** with Gemini and Ollama provider support
+- **✅ LLM REST API** endpoints for completion, analysis, and provider management
+- **✅ Rate limiting** with Redis-backed provider rate limits
+- **✅ Provider fallback** and health monitoring with auto-switching
+- **✅ Health Dashboard** at `/health-dashboard` for monitoring LLM providers
 - **PostgreSQL database** with secure production configuration
 - **Redis cache** for performance and rate limiting (+ LLM rate limiting)
 - **Git-based deployment** process with automated scripts
@@ -125,6 +129,29 @@ cd backend
 
 # Apply code formatting
 ./gradlew spotlessApply
+```
+
+#### **LLM API Testing (Package 2 Complete)**
+```bash
+# Health checks
+curl http://localhost:3000/api/v1/health                # General API health
+curl http://localhost:3000/api/v1/llm/health           # LLM provider health
+curl http://localhost:3000/api/v1/llm/providers        # Available providers
+curl http://localhost:3000/api/v1/llm/models           # Supported models
+
+# Text completion
+curl -X POST http://localhost:3000/api/v1/llm/complete \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Hello, how are you?", "maxTokens": 50}'
+
+# Document analysis (structured extraction)
+curl -X POST http://localhost:3000/api/v1/llm/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Invoice #123 for $500", "documentType": "INVOICE"}'
+
+# Provider management
+curl -X POST http://localhost:3000/api/v1/llm/providers/ollama/activate
+curl http://localhost:3000/api/v1/llm/providers/active
 ```
 
 #### **Rebuild & Deploy Changes**

@@ -59,7 +59,7 @@ public class LLMProperties {
     }
     
     public static class Gemini {
-        private boolean enabled = false;
+        private boolean enabled = true;
         private String apiKey;
         private String baseUrl = "https://generativelanguage.googleapis.com";
         private String model = "gemini-1.5-flash-latest";

@@ -56,7 +56,9 @@ public class GeminiProvider implements LLMProvider {
             .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024)) // 1MB
             .build();
         
-        logger.info("Gemini provider initialized with base URL: {}", geminiConfig.getBaseUrl());
+        logger.info("Gemini provider initialized with base URL: {}, enabled: {}, hasApiKey: {}", 
+                   geminiConfig.getBaseUrl(), geminiConfig.isEnabled(), 
+                   geminiConfig.getApiKey() != null && !geminiConfig.getApiKey().trim().isEmpty());
     }
     
     @Override

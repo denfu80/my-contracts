@@ -63,6 +63,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_ENABLED=${GEMINI_ENABLED:-true}
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
       - OLLAMA_DEFAULT_MODEL=${OLLAMA_DEFAULT_MODEL:-llama3.1}
       - JWT_SECRET=${JWT_SECRET:-}
