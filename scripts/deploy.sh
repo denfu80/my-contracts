@@ -5,30 +5,65 @@ echo "🚀 Deploying Document Management Service..."
 
 # Configuration
 PROJECT_DIR="/opt/docmgr"
+BACKUP_DIR="/opt/docmgr/backups"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 
 # Navigate to project directory
 cd "$PROJECT_DIR"
 
+# Create backup of current state
+echo "💾 Creating backup of current deployment..."
+mkdir -p "$BACKUP_DIR"
+docker-compose ps > "$BACKUP_DIR/containers_${TIMESTAMP}.txt" 2>/dev/null || echo "No containers running"
+
 echo "📦 Pulling latest changes from git..."
 git pull origin main
 
+echo "🛑 Stopping existing containers..."
+docker-compose down
+
 echo "🔨 Building and starting containers..."
-docker-compose up -d --build
+if ! docker-compose up -d --build; then
+    echo "❌ Failed to start containers"
+    echo "📋 Attempting to restore previous state..."
+    docker-compose down
+    exit 1
+fi
 
 echo "⏳ Waiting for services to start..."
-sleep 20
+sleep 30
 
 echo "🔍 Checking service health..."
 
-# Check API health
-if curl -f http://localhost:3000/api/v1/health > /dev/null 2>&1; then
-    echo "✅ API is healthy"
-else
-    echo "❌ API health check failed"
+# Function to perform health checks with retries
+check_api_health() {
+    local retries=6
+    local wait_time=10
+    
+    for i in $(seq 1 $retries); do
+        echo "🔍 API health check attempt $i/$retries..."
+        if curl -f http://localhost:3000/api/v1/health > /dev/null 2>&1; then
+            echo "✅ API is healthy"
+            return 0
+        fi
+        
+        if [ $i -lt $retries ]; then
+            echo "⏳ API not ready yet, waiting ${wait_time}s..."
+            sleep $wait_time
+        fi
+    done
+    
+    echo "❌ API health check failed after $retries attempts"
     echo "📋 Container status:"
     docker-compose ps
     echo "📋 API logs:"
-    docker-compose logs --tail 20 api
+    docker-compose logs --tail 30 api
+    return 1
+}
+
+# Check API health with retries
+if ! check_api_health; then
+    echo "💥 Deployment failed - API not healthy"
     exit 1
 fi
 
@@ -51,8 +86,14 @@ else
 fi
 
 echo "🎉 Deployment completed successfully!"
-echo "📍 Application URL: http://192.168.4.8:3000/api/v1/health"
+echo "📍 Application URLs:"
+echo "   - API Health: http://192.168.4.8:3000/api/v1/health"
+echo "   - Swagger UI: http://192.168.4.8:3000/swagger-ui/index.html"
+echo "   - LLM Health: http://192.168.4.8:3000/api/v1/llm/health"
 
 # Show current status
 echo "📊 Current container status:"
 docker-compose ps
+
+echo "💾 Deployment backup saved: $BACKUP_DIR/containers_${TIMESTAMP}.txt"
+echo "🕐 Deployment completed at: $(date)"
