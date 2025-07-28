@@ -14,6 +14,7 @@ services:
       - SPRING_PROFILES_ACTIVE=development
       - DEBUG_MODE=true
       - LOG_LEVEL=DEBUG
+      - SERVER_ADDRESS=${SERVER_ADDRESS:-}
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       # LLM Provider Configuration (inherit from .env)
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}

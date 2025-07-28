@@ -69,6 +69,7 @@ services:
       - JWT_SECRET=${JWT_SECRET:-}
       - UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:-52428800}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - SERVER_ADDRESS=${SERVER_ADDRESS:-}
     volumes:
       - uploads_data:/app/uploads
       - temp_data:/app/temp
