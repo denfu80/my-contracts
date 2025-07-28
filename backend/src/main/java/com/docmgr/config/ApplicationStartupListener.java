@@ -19,6 +19,9 @@ public class ApplicationStartupListener {
     @Value("${server.port:3000}")
     private int serverPort;
     
+    @Value("${server.address:http://localhost}")
+    private String serverAddress;
+    
     private final Environment environment;
     
     public ApplicationStartupListener(Environment environment) {
@@ -29,33 +32,29 @@ public class ApplicationStartupListener {
     public void onApplicationReady() {
         boolean isDevelopment = isProfileActive("development");
         boolean isProduction = isProfileActive("production");
-        
+        String url = serverAddress + ":" + serverPort;
         // Determine base URLs
-        String localUrl = "http://localhost:" + serverPort;
-        String productionUrl = isProduction ? "http://192.168.4.8:" + serverPort : null;
-        
         logger.info("🚀 Document Management Service is ready!");
         logger.info("📍 Application URLs:");
         
         // Always show localhost URLs
-        logger.info("   - API Health: {}/api/v1/health", localUrl);
-        logger.info("   - LLM Health: {}/api/v1/llm/health", localUrl);
-        logger.info("   - Swagger UI: {}/swagger-ui/index.html", localUrl);
-        logger.info("   - OpenAPI JSON: {}/api/v1/api-docs", localUrl);
-        logger.info("   - Health Dashboard: {}/health-dashboard", localUrl);
+        logger.info("   - API Health: {}/api/v1/health", url);
+        logger.info("   - LLM Health: {}/api/v1/llm/health", url);
+        logger.info("   - Swagger UI: {}/swagger-ui/index.html", url);
+        logger.info("   - OpenAPI JSON: {}/api/v1/api-docs", url);
+        logger.info("   - Health Dashboard: {}/health-dashboard", url);
         
         // Show production URLs if in production
-        if (productionUrl != null) {
+        if (isProduction) {
             logger.info("🌐 Production URLs:");
-            logger.info("   - API Health: {}/api/v1/health", productionUrl);
-            logger.info("   - Swagger UI: {}/swagger-ui/index.html", productionUrl);
-            logger.info("   - Health Dashboard: {}/health-dashboard", productionUrl);
+            logger.info("   - Swagger UI: {}/swagger-ui/index.html", url);
+            logger.info("   - Health Dashboard: {}/health-dashboard", url);
         }
         
         if (isDevelopment) {
             logger.info("🔧 Development Tools:");
-            logger.info("   - pgAdmin: http://localhost:8080 (admin@example.com / admin123)");
-            logger.info("   - Redis Commander: http://localhost:8081");
+            logger.info("   - pgAdmin: {}:8080 (admin@example.com / admin123)", serverAddress);
+            logger.info("   - Redis Commander: {}:8081", serverAddress);
             logger.info("   - Debug Port: 5005 (for IDE debugging)");
         }
         
